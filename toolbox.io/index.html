@@ -5,7 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>toolbox.io — fun demos for Toolbox on Foundry</title>
   <meta name="description" content="Clone-in-2-minutes demos showing Toolbox with Tool Search on Foundry. Big box, tiny context." />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="alternate icon" href="assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="assets/favicon-180.png" />
   <link rel="stylesheet" href="assets/commandline.css" />
+  <style>
+    .cl-tabs { display: flex; gap: 0; margin: 0.5rem 0 0.25rem; }
+    .cl-tabs button {
+      font-family: var(--cl-mono); font-size: 0.95rem; cursor: pointer;
+      background: var(--cl-bg); color: var(--cl-ink);
+      border: 1px solid var(--cl-line); padding: 0.3rem 1rem; margin-right: -1px;
+    }
+    .cl-tabs button.active { background: var(--cl-ink); color: var(--cl-bg); }
+    .cl-tabs button .soon { color: var(--cl-faint); font-size: 0.8em; }
+    .cl-tabs button.active .soon { color: var(--cl-bg); opacity: 0.75; }
+    .cl-card.soon { opacity: 0.72; }
+    .cl-card .badge {
+      align-self: flex-start; font-size: 0.72em; letter-spacing: 0.04em;
+      border: 1px solid var(--cl-line); padding: 0 0.4ch; text-transform: uppercase;
+    }
+  </style>
 </head>
 <body class="cl">
   <main style="max-width: 980px; margin: 0 auto; padding: 2rem 1.25rem;">
@@ -21,6 +40,11 @@
       no matter how big the box gets. Pick one, clone it, run <code>make demo</code> — no Azure needed.</p>
 
     <h2>Demos</h2>
+    <nav class="cl-tabs" id="tabs" role="tablist">
+      <button data-track="local" role="tab" class="active">local</button>
+      <button data-track="cloud" role="tab">cloud <span class="soon">(soon)</span></button>
+    </nav>
+    <p class="cl-caption" id="trackNote"></p>
     <div class="cl-grid" id="grid"><!-- cards injected from demos.json --></div>
 
     <p style="margin-top: 2rem;" class="cl-caption">built with the toolbox-demo-builder skill ·
@@ -28,33 +52,73 @@
   </main>
 
   <script>
-    // No build step. The gallery reads demos.json and renders cards.
+    // No build step. The gallery reads demos.json and renders cards per track.
+    const NOTES = {
+      local: 'Runs offline against a local mock emulator \u2014 no Azure, no key. Clone it and run make demo.',
+      cloud: 'Pointed at a real Toolbox you provision on Azure AI Foundry. Coming soon.'
+    };
+    let DATA = { local: [], cloud: [] };
+
     fetch('demos.json')
       .then(r => r.json())
       .then(demos => {
-        const grid = document.getElementById('grid');
-        let maxBox = 0;
-        demos.forEach(d => {
-          if (d.boxSize) maxBox = Math.max(maxBox, d.boxSize);
-          const card = document.createElement('div');
-          card.className = 'cl-card';
-          card.innerHTML = `
-            <strong class="cl-cursor">${escapeHtml(d.title)}</strong>
-            <span>${escapeHtml(d.blurb || '')}</span>
-            <span class="lean">[${escapeHtml(d.lean || 'tool-search')}]</span>
-            <span>
-              ${d.repo ? `<a href="${escapeAttr(d.repo)}">repo</a> · ` : ''}
-              ${d.blog ? `<a href="${escapeAttr(d.blog)}">blog</a>` : ''}
-            </span>`;
-          grid.appendChild(card);
-        });
+        // Support both the new {local, cloud} shape and a legacy flat array.
+        DATA = Array.isArray(demos) ? { local: demos, cloud: [] } : {
+          local: demos.local || [],
+          cloud: demos.cloud || []
+        };
+        const maxBox = [...DATA.local, ...DATA.cloud]
+          .reduce((m, d) => d.boxSize ? Math.max(m, d.boxSize) : m, 0);
         if (maxBox) document.getElementById('boxN').textContent = maxBox;
-        if (!demos.length) grid.innerHTML = '<div class="cl-card cl-caption">no demos yet — run the skill</div>';
+
+        const initial = location.hash.replace('#', '');
+        render(initial === 'cloud' ? 'cloud' : 'local');
       })
       .catch(() => {
         document.getElementById('grid').innerHTML =
           '<div class="cl-card cl-caption">demos.json not found</div>';
       });
+
+    function card(d) {
+      const el = document.createElement('div');
+      const soon = d.status === 'coming-soon';
+      el.className = 'cl-card' + (soon ? ' soon' : '');
+      const links = soon ? '' : `
+            <span>
+              ${d.repo ? `<a href="${escapeAttr(d.repo)}">repo</a> \u00b7 ` : ''}
+              ${d.blog ? `<a href="${escapeAttr(d.blog)}">blog</a>` : ''}
+            </span>`;
+      el.innerHTML = `
+            ${soon ? '<span class="badge">coming soon</span>' : ''}
+            <strong class="cl-cursor">${escapeHtml(d.title)}</strong>
+            <span>${escapeHtml(d.blurb || '')}</span>
+            <span class="lean">[${escapeHtml(d.lean || 'tool-search')}]</span>${links}`;
+      return el;
+    }
+
+    function render(track) {
+      const grid = document.getElementById('grid');
+      const list = DATA[track] || [];
+      grid.innerHTML = '';
+      if (!list.length) {
+        grid.innerHTML = '<div class="cl-card cl-caption">no demos yet</div>';
+      } else {
+        list.forEach(d => grid.appendChild(card(d)));
+      }
+      document.getElementById('trackNote').textContent = NOTES[track] || '';
+      document.querySelectorAll('#tabs button').forEach(b =>
+        b.classList.toggle('active', b.dataset.track === track));
+      if (location.hash.replace('#', '') !== track) history.replaceState(null, '', '#' + track);
+    }
+
+    document.getElementById('tabs').addEventListener('click', e => {
+      const btn = e.target.closest('button[data-track]');
+      if (btn) render(btn.dataset.track);
+    });
+    window.addEventListener('hashchange', () => {
+      const t = location.hash.replace('#', '');
+      render(t === 'cloud' ? 'cloud' : 'local');
+    });
 
     function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
     function escapeAttr(s){return escapeHtml(s);}
