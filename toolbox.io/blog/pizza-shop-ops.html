@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pizza Shop Ops — toolbox.io</title>
+<link rel="stylesheet" href="../assets/commandline.css">
+<style>
+ body.cl{max-width:820px;margin:0 auto;padding:2rem 1.25rem;font-size:15px;}
+ .cl h1{border-bottom:2px solid var(--cl-line);padding-bottom:.3rem;}
+ .cl pre{border:1px solid var(--cl-line);padding:12px 14px;overflow:auto;background:#cfcfcd;white-space:pre;}
+ .cl ul{padding-left:1.2rem;} .cl li{margin:.2rem 0;}
+ .nav{margin-bottom:1rem;} .nav a{color:var(--cl-ink);text-decoration:underline;}
+</style></head><body class="cl">
+<p class="nav"><a href="../index.html">&larr; back to gallery</a></p>
+<h1><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/pizza-shop-ops" style="color:inherit;text-decoration:none">I put 24 tools behind one endpoint and my pizza agent saw two</a></h1>
+<p class="nav"><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/pizza-shop-ops">view the demo code on GitHub &rarr;</a></p>
+<p>I gave a Friday-night pizza shop an AI line cook, stuffed 24 tools behind a single Toolbox endpoint on Foundry, and the agent ran the whole rush with exactly <strong>two</strong> tools in its context. The principle the demo is built around: <strong>big box, tiny context.</strong></p>
+<h2>What it does</h2>
+<p><code>pizza-shop-ops</code> runs the dinner rush: check the mozzarella, fire the oven, pull up a dough recipe, ring in table 12, and push three deliveries out the door. Five plain-English turns, five different stations. It runs locally with <code>make demo</code> — no Azure, no key.</p>
+<p><img src="../assets/gifs/pizza-shop-ops.gif" alt="Pizza Shop Ops demo: Tool Search picks the station, approval gates the oven" style="max-width:100%;display:block;border:1px solid var(--cl-line)"></p>
+<h2>The trick</h2>
+<p>The toolbox has <code>{"type": "toolbox_search_preview"}</code> on, so the model only ever sees <code>tool_search</code> (say what you need) and <code>call_tool</code> (run it). Twenty-four stations behind the box, two tools in front of the model. This theme also leans into <strong>approval gating</strong>: <code>oven.set_temp</code> carries <code>require_approval: always</code>, so firing the deck oven pauses for a shift-lead sign-off before it runs.</p>
+<pre><code>&gt;_ user: &quot;fire up the deck oven for Neapolitan pies&quot;
+   [tool_search] query: &quot;set the oven temperature and preheat it for a style of pizza&quot;   // round-trip #2
+   [matched]     oven.set_temp, oven.read_temp, delivery.assign_driver, inventory.check_stock
+   [call_tool]   oven.set_temp({ &quot;temp&quot;: 475, &quot;style&quot;: &quot;Neapolitan&quot; })
+   =&gt; [approval required] oven.set_temp is gated. Shift-lead approved -&gt; preheating to 475F.
+tools in box: 24   ·   tools in model context: 2
+</code></pre>
+<p>The matching is real: the emulator ranks the actual descriptions, and <code>oven.set_temp</code> wins over the near-miss <code>oven.read_temp</code> because its description and <code>additional_search_text</code> carry the colloquial "fire up / crank up / turn on the oven."</p>
+<h2>The numbers</h2>
+<ul>
+<li>Tools in the box: <strong>24</strong></li>
+<li>Tools in the model context: <strong>2</strong> (<code>tool_search</code> + <code>call_tool</code>)</li>
+<li><code>tool_search</code> round-trips: <strong>5</strong></li>
+<li>Guarded tools that paused for approval: <strong>1</strong> (<code>oven.set_temp</code>)</li>
+<li>Lines of agent code that changed when I added a 25th tool: <strong>0</strong></li>
+</ul>
+<h2>The part people miss</h2>
+<p>Add a tool to <code>mock-backends/tools.json</code>, rerun — the agent code is untouched and the counter still says 2. Reshape the menu of tools without rewriting the cook. That is the managed-toolbox payoff.</p>
+<h2>Clone it</h2>
+<pre><code class="language-bash">git clone &lt;repo&gt; &amp;&amp; cd pizza-shop-ops &amp;&amp; make demo      # python
+make demo-dotnet                                         # C#, identical output
+</code></pre>
+<h2>Honest caveats</h2>
+<p>Tool Search is in preview. You pay one search round-trip per intent, and the right station only surfaces if its description matches how people actually talk — <code>additional_search_text</code> is doing real work here. Approval gating adds a human in the loop by design; that is a feature, not latency to optimize away.</p>
+</body></html>

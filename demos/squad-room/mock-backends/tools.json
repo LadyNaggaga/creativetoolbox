@@ -1,0 +1,31 @@
+{
+  "search_enabled": true,
+  "_comment": "THE SHARED BOX for squad-room. One governed Toolbox consumed by a whole agent TEAM (lead, researcher, builder). Hero tools have rich descriptions + additional_search_text and live in hero_tools/. releases.cut carries require_approval=always (governance). Every team member sees the same 2 meta-tools; the box stays one flat-cost surface for the whole team.",
+  "tools": [
+    { "name": "issues.assign", "description": "Break a feature request into work items and assign them to team members; use when the lead wants to plan, divide up, or hand out tasks for a piece of work.", "additional_search_text": "plan break down assign delegate tasks work items tickets divide up hand out backlog feature request" },
+    { "name": "kb.search_docs", "description": "Search the team's internal docs and codebase notes for how something is already done; use for find existing patterns, how do we currently, where is this implemented questions.", "additional_search_text": "search docs codebase how do we currently existing pattern where is implemented architecture notes find prior art" },
+    { "name": "design.lookup_tokens", "description": "Look up the design system tokens, color palette, spacing, and theming variables from the style guide.", "additional_search_text": "design tokens style guide colors palette theming variables dark mode spacing typography brand" },
+    { "name": "repo.open_pr", "description": "Open a pull request with a set of code changes on a branch; use when the builder wants to submit, push up, or open a PR for work.", "additional_search_text": "pull request PR open submit push up code changes branch merge request commit" },
+    { "name": "ci.run_tests", "description": "Run the CI test suite against a branch and return pass/fail with coverage; use for run the tests, check CI, is the build green requests.", "additional_search_text": "run tests CI build pipeline unit tests green check passing coverage verify branch" },
+    { "name": "releases.cut", "description": "Cut a tagged release or preview build from a branch; this is a governed action that requires lead approval before it fires.", "additional_search_text": "release cut tag ship deploy preview build version publish promote", "require_approval": "always" },
+
+    { "name": "issues.comment", "description": "Add a comment to an issue or work item." },
+    { "name": "issues.close", "description": "Close a completed issue." },
+    { "name": "repo.read_file", "description": "Read a file from the repository." },
+    { "name": "repo.create_branch", "description": "Create a new branch." },
+    { "name": "repo.review_pr", "description": "Leave a review on a pull request." },
+    { "name": "ci.read_status", "description": "Read the latest CI run status." },
+    { "name": "ci.rerun", "description": "Re-run a failed CI job." },
+    { "name": "deploy.to_staging", "description": "Deploy a build to the staging environment." },
+    { "name": "deploy.rollback", "description": "Roll back a deployment." },
+    { "name": "metrics.read_dashboard", "description": "Read product metrics from the dashboard." },
+    { "name": "metrics.create_alert", "description": "Create a monitoring alert." },
+    { "name": "web.search", "description": "Search the public web for external references." },
+    { "name": "kb.search_decisions", "description": "Search the team's architecture decision records." },
+    { "name": "people.who_owns", "description": "Find which team member owns a component." },
+    { "name": "calendar.book_review", "description": "Book a design or code review meeting." },
+    { "name": "secrets.rotate", "description": "Rotate a service credential." },
+    { "name": "docs.publish", "description": "Publish an updated docs page." },
+    { "name": "feedback.search", "description": "Search user feedback by topic." }
+  ]
+}

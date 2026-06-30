@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>toolbox.io — fun demos for Toolbox on Foundry</title>
+  <meta name="description" content="Clone-in-2-minutes demos showing Toolbox with Tool Search on Foundry. Big box, tiny context." />
+  <link rel="stylesheet" href="assets/commandline.css" />
+</head>
+<body class="cl">
+  <main style="max-width: 980px; margin: 0 auto; padding: 2rem 1.25rem;">
+    <h1 class="cl-cursor">toolbox.io</h1>
+    <p class="cl-caption">fun, cloneable demos for Toolbox with Tool Search on Foundry</p>
+
+    <div class="cl-counter" aria-hidden="true">
+      <span><span class="big" id="boxN">—</span> <span class="lbl">tools in the box</span></span>
+      <span><span class="big">2</span> <span class="lbl">tools in model context</span></span>
+    </div>
+    <p style="max-width: 60ch;">One endpoint. Many tools. Flat cost. Every demo below puts that on
+      screen: the model only ever sees <span class="cl-tag">tool_search</span><span class="cl-tag">call_tool</span>
+      no matter how big the box gets. Pick one, clone it, run <code>make demo</code> — no Azure needed.</p>
+
+    <h2>Demos</h2>
+    <div class="cl-grid" id="grid"><!-- cards injected from demos.json --></div>
+
+    <p style="margin-top: 2rem;" class="cl-caption">built with the toolbox-demo-builder skill ·
+      docs: Toolbox with Tool Search on Foundry — Microsoft Learn</p>
+  </main>
+
+  <script>
+    // No build step. The gallery reads demos.json and renders cards.
+    fetch('demos.json')
+      .then(r => r.json())
+      .then(demos => {
+        const grid = document.getElementById('grid');
+        let maxBox = 0;
+        demos.forEach(d => {
+          if (d.boxSize) maxBox = Math.max(maxBox, d.boxSize);
+          const card = document.createElement('div');
+          card.className = 'cl-card';
+          card.innerHTML = `
+            <strong class="cl-cursor">${escapeHtml(d.title)}</strong>
+            <span>${escapeHtml(d.blurb || '')}</span>
+            <span class="lean">[${escapeHtml(d.lean || 'tool-search')}]</span>
+            <span>
+              ${d.repo ? `<a href="${escapeAttr(d.repo)}">repo</a> · ` : ''}
+              ${d.blog ? `<a href="${escapeAttr(d.blog)}">blog</a>` : ''}
+            </span>`;
+          grid.appendChild(card);
+        });
+        if (maxBox) document.getElementById('boxN').textContent = maxBox;
+        if (!demos.length) grid.innerHTML = '<div class="cl-card cl-caption">no demos yet — run the skill</div>';
+      })
+      .catch(() => {
+        document.getElementById('grid').innerHTML =
+          '<div class="cl-card cl-caption">demos.json not found</div>';
+      });
+
+    function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+    function escapeAttr(s){return escapeHtml(s);}
+  </script>
+</body>
+</html>

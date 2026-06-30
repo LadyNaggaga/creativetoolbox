@@ -1,0 +1,14 @@
+# .NET build output
+**/bin/
+**/obj/
+
+# Python
+__pycache__/
+*.pyc
+
+# Emulator runtime
+**/.emu.pid
+
+# OS / editor
+.DS_Store
+Thumbs.db

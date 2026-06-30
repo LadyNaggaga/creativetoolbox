@@ -1,0 +1,29 @@
+[
+  {
+    "slug": "space-mission-control",
+    "title": "Space Mission Control",
+    "blurb": "Keep three astronauts alive while the agent finds the right console \u2014 24 tools, 2 in context.",
+    "repo": "",
+    "blog": "blog/space-mission-control.html",
+    "lean": "pin + multi-server",
+    "boxSize": 24
+  },
+  {
+    "slug": "pizza-shop-ops",
+    "title": "Pizza Shop Ops",
+    "blurb": "Run the Friday rush without dropping a pie \u2014 Tool Search picks the station, approval gates the oven.",
+    "repo": "",
+    "blog": "blog/pizza-shop-ops.html",
+    "lean": "approval gating",
+    "boxSize": 24
+  },
+  {
+    "slug": "squad-room",
+    "title": "The Squad Room",
+    "blurb": "A whole AI team (lead, researcher, builder) shares one governed Toolbox \u2014 each member, 2 tools in context.",
+    "repo": "",
+    "blog": "blog/squad-room.html",
+    "lean": "squad-as-team + governance",
+    "boxSize": 24
+  }
+]

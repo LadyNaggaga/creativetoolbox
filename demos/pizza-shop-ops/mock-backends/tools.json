@@ -1,0 +1,31 @@
+{
+  "search_enabled": true,
+  "_comment": "THE BOX for pizza-shop-ops. Hero tools have rich descriptions + additional_search_text and live in hero_tools/. oven.set_temp carries require_approval=always to show approval gating. The rest are name+description only so the box is honestly large.",
+  "tools": [
+    { "name": "inventory.check_stock", "description": "Check how much of an ingredient, topping, box, or SKU is left and where it is; use when someone asks do we have, are we out of, how much is left, or are we good on something.", "additional_search_text": "stock count quantity remaining out of supply mozzarella cheese dough how much do we have low on" },
+    { "name": "oven.set_temp", "description": "Set or change a pizza oven's target temperature and preheat it for a given style of pie; this is a guarded action that requires shift-lead approval before it fires.", "additional_search_text": "oven temperature preheat fire up heat deck bake degrees neapolitan crank up turn on the oven", "require_approval": "always" },
+    { "name": "orders.create", "description": "Create a new food order with line items, table or ticket number, and priority; use when someone wants to place, ring in, fire, or start an order.", "additional_search_text": "new order place ring in fire ticket table large pepperoni get it in start an order" },
+    { "name": "orders.status", "description": "Check the status of an existing order or ticket by table or id; use for where is, is it ready, how long on an order.", "additional_search_text": "order status where is ready how long ticket table check on the order" },
+    { "name": "kb.search_recipes", "description": "Look up a recipe, dough formula, bake time, or prep step from the kitchen knowledge base; use for how do I make, what's the recipe, hydration, proof time questions.", "additional_search_text": "recipe dough hydration proof bake time prep how to make ingredients formula neapolitan" },
+    { "name": "delivery.assign_driver", "description": "Assign an available delivery driver to one or more outgoing orders and dispatch them on a route.", "additional_search_text": "delivery driver dispatch send out route assign deliver take the orders out" },
+
+    { "name": "inventory.reorder", "description": "Place a restock/reorder for a low ingredient." },
+    { "name": "inventory.count_waste", "description": "Log wasted or spoiled product." },
+    { "name": "orders.cancel", "description": "Cancel an existing order." },
+    { "name": "orders.add_item", "description": "Add an item to an open order." },
+    { "name": "oven.read_temp", "description": "Read a pizza oven's current temperature." },
+    { "name": "oven.start_clean", "description": "Start an oven self-clean cycle." },
+    { "name": "kb.search_allergens", "description": "Look up allergen info for a menu item." },
+    { "name": "kb.search_safety", "description": "Search food-safety and handling procedures." },
+    { "name": "customers.lookup", "description": "Look up a customer by name or phone." },
+    { "name": "customers.add_loyalty", "description": "Add loyalty points to a customer." },
+    { "name": "billing.create_invoice", "description": "Create an invoice for an order." },
+    { "name": "billing.apply_discount", "description": "Apply a discount code to a ticket." },
+    { "name": "delivery.track", "description": "Track a driver's live location." },
+    { "name": "delivery.estimate_eta", "description": "Estimate delivery ETA for an address." },
+    { "name": "comms.notify_customer", "description": "Text a customer about their order." },
+    { "name": "comms.page_kitchen", "description": "Page a message to the kitchen line." },
+    { "name": "shifts.who_is_on", "description": "List who is currently on shift." },
+    { "name": "reports.daily_summary", "description": "Generate the end-of-day sales summary." }
+  ]
+}

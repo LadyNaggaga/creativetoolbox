@@ -1,0 +1,31 @@
+{
+  "search_enabled": true,
+  "_comment": "THE BOX for space-mission-control. Tools span themed MCP servers (telemetry, nav, power, kb, comms, cargo, thermal, attitude, water, crew). Hero tools have rich descriptions + additional_search_text and live in hero_tools/. telemetry.read_o2 is PINNED to show the pin feature. The rest are name+description only so the box is honestly large.",
+  "tools": [
+    { "name": "telemetry.read_o2", "description": "Read current cabin oxygen partial pressure and air-quality status; use when someone asks about breathable air, O2, life support, whether the cabin is stuffy, or if the crew is safe to breathe.", "additional_search_text": "oxygen air quality life support breathable cabin atmosphere stuffy co2 ppO2 hypoxia", "pin": true },
+    { "name": "nav.plot_burn", "description": "Plan and compute a propulsive engine burn to change orbit, lower or raise altitude, phase for a rendezvous, or set up a deorbit; returns delta-v, burn duration, and ignition time.", "additional_search_text": "orbit maneuver delta-v engine burn deorbit raise lower altitude rendezvous trajectory thruster" },
+    { "name": "power.balance_load", "description": "Rebalance the electrical power budget across subsystems when draw is tight; sheds or reprioritizes non-critical loads to protect life support and avoid a brownout.", "additional_search_text": "electrical power budget battery solar load shed brownout amps watts heaters draw distribute" },
+    { "name": "kb.search_procedures", "description": "Search the flight procedures and emergency checklists library; use for any what-do-we-do-if-X-fails or pull-up-the-checklist-for-Y request.", "additional_search_text": "procedure checklist emergency malfunction failure how do we handle steps protocol contingency scrubber" },
+    { "name": "comms.send_ground", "description": "Send a status message, telemetry summary, or request down to ground control (Houston / mission control).", "additional_search_text": "message houston ground control mission control downlink radio report tell the ground notify capcom" },
+    { "name": "cargo.manifest", "description": "Look up the pressurized cargo manifest: what was loaded, stowage location, and mass for a given resupply flight." },
+
+    { "name": "telemetry.read_pressure", "description": "Read cabin total pressure." },
+    { "name": "telemetry.read_temp", "description": "Read cabin and module temperatures." },
+    { "name": "thermal.set_loop", "description": "Adjust the active thermal control coolant loop setpoint." },
+    { "name": "thermal.read_radiators", "description": "Read external radiator panel temperatures." },
+    { "name": "attitude.read", "description": "Read current spacecraft attitude and rates." },
+    { "name": "attitude.set_pointing", "description": "Command a new pointing/orientation." },
+    { "name": "nav.read_state_vector", "description": "Read current position and velocity state vector." },
+    { "name": "nav.predict_pass", "description": "Predict the next ground-station pass window." },
+    { "name": "power.read_battery", "description": "Read battery state of charge." },
+    { "name": "power.read_solar", "description": "Read solar array output." },
+    { "name": "water.read_recycler", "description": "Read water recycler status and tank levels." },
+    { "name": "water.purge_line", "description": "Purge a water line." },
+    { "name": "crew.read_vitals", "description": "Read crew biometric vitals." },
+    { "name": "crew.schedule_task", "description": "Schedule a crew task on the timeline." },
+    { "name": "comms.read_signal", "description": "Read uplink/downlink signal strength." },
+    { "name": "cargo.stow_item", "description": "Record stowage of an item to a location." },
+    { "name": "kb.search_anomalies", "description": "Search the past anomaly and lessons-learned database." },
+    { "name": "experiments.run_payload", "description": "Start a queued science payload experiment." }
+  ]
+}
