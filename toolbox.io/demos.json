@@ -7,7 +7,8 @@
       "repo": "",
       "blog": "blog/mars-greenhouse-ops.html",
       "lean": "pin + multi-server",
-      "boxSize": 24
+      "boxSize": 24,
+      "tokens": { "turns": 5, "pinned": 1 }
     },
     {
       "slug": "pizza-shop-ops",
@@ -16,7 +17,8 @@
       "repo": "",
       "blog": "blog/pizza-shop-ops.html",
       "lean": "approval gating",
-      "boxSize": 24
+      "boxSize": 24,
+      "tokens": { "turns": 5, "pinned": 0 }
     },
     {
       "slug": "squad-room",
@@ -25,7 +27,8 @@
       "repo": "",
       "blog": "blog/squad-room.html",
       "lean": "squad-as-team + governance",
-      "boxSize": 24
+      "boxSize": 24,
+      "tokens": { "turns": 6, "pinned": 0 }
     }
   ],
   "cloud": [
