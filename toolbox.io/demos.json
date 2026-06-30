@@ -47,5 +47,25 @@
       "lean": "BYO agent",
       "status": "coming-soon"
     }
+  ],
+  "share": [
+    {
+      "title": "GitHub Copilot",
+      "blurb": "Point GitHub Copilot at your Toolbox endpoint \u2014 same tool_search, same flat context, right inside the editor.",
+      "lean": "editor agent",
+      "status": "coming-soon"
+    },
+    {
+      "title": "Claw",
+      "blurb": "Bring your Toolbox to Claw \u2014 one shared endpoint, the agent discovers tools on demand.",
+      "lean": "mcp client",
+      "status": "coming-soon"
+    },
+    {
+      "title": "Claude",
+      "blurb": "Use your Toolbox from Claude over MCP \u2014 the box stays flat-cost no matter how many tools it holds.",
+      "lean": "mcp client",
+      "status": "coming-soon"
+    }
   ]
 }

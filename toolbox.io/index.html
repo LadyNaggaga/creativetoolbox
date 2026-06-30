@@ -43,6 +43,7 @@
     <nav class="cl-tabs" id="tabs" role="tablist">
       <button data-track="local" role="tab" class="active">local</button>
       <button data-track="cloud" role="tab">cloud <span class="soon">(soon)</span></button>
+      <button data-track="share" role="tab">share <span class="soon">(soon)</span></button>
     </nav>
     <p class="cl-caption" id="trackNote"></p>
     <div class="cl-grid" id="grid"><!-- cards injected from demos.json --></div>
@@ -55,24 +56,27 @@
     // No build step. The gallery reads demos.json and renders cards per track.
     const NOTES = {
       local: 'Runs offline against a local mock emulator \u2014 no Azure, no key. Clone it and run make demo.',
-      cloud: 'Pointed at a real Toolbox you provision on Azure AI Foundry. Coming soon.'
+      cloud: 'Pointed at a real Toolbox you provision on Azure AI Foundry. Coming soon.',
+      share: 'Use one Toolbox across any agent \u2014 GitHub Copilot, Claw, Claude. Coming soon.'
     };
-    let DATA = { local: [], cloud: [] };
+    const TRACKS = ['local', 'cloud', 'share'];
+    let DATA = { local: [], cloud: [], share: [] };
 
     fetch('demos.json')
       .then(r => r.json())
       .then(demos => {
-        // Support both the new {local, cloud} shape and a legacy flat array.
-        DATA = Array.isArray(demos) ? { local: demos, cloud: [] } : {
+        // Support both the new {local, cloud, share} shape and a legacy flat array.
+        DATA = Array.isArray(demos) ? { local: demos, cloud: [], share: [] } : {
           local: demos.local || [],
-          cloud: demos.cloud || []
+          cloud: demos.cloud || [],
+          share: demos.share || []
         };
-        const maxBox = [...DATA.local, ...DATA.cloud]
+        const maxBox = [...DATA.local, ...DATA.cloud, ...DATA.share]
           .reduce((m, d) => d.boxSize ? Math.max(m, d.boxSize) : m, 0);
         if (maxBox) document.getElementById('boxN').textContent = maxBox;
 
         const initial = location.hash.replace('#', '');
-        render(initial === 'cloud' ? 'cloud' : 'local');
+        render(TRACKS.includes(initial) ? initial : 'local');
       })
       .catch(() => {
         document.getElementById('grid').innerHTML =
@@ -117,7 +121,7 @@
     });
     window.addEventListener('hashchange', () => {
       const t = location.hash.replace('#', '');
-      render(t === 'cloud' ? 'cloud' : 'local');
+      render(TRACKS.includes(t) ? t : 'local');
     });
 
     function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
