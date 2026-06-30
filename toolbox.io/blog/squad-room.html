@@ -41,6 +41,33 @@ tools in the shared box: 24   ·   tools in each member's context: 2
 <li>Governed tools that paused for approval: <strong>1</strong> (<code>releases.cut</code>)</li>
 <li>Per-agent tool wiring I had to write: <strong>0</strong> — they all share the one endpoint</li>
 </ul>
+<h3 style="margin-top:1.2rem;">Context cost: with vs. without Tool Search</h3>
+<div class="tokchart">
+  <div class="row"><span class="lbl">without</span><span class="bar" data-pct="100"></span><span class="num">15,840 tok</span></div>
+  <div class="row"><span class="lbl">with</span><span class="bar" data-pct="15.9"></span><span class="num">2,520 tok</span></div>
+  <p class="basis">&minus;84% across 6 turns (per agent). Estimate: ~110 tokens per OpenAI-style tool schema (24 tools loaded every turn without Tool Search; just <code>tool_search</code> + <code>call_tool</code> with it), plus ~200 tokens per search round-trip. Multiply by 3 squad members for the team total.</p>
+</div>
+<style>
+ .tokchart{font-family:var(--cl-mono);font-size:.9rem;border:1px solid var(--cl-line);padding:.8rem 1rem;margin:.6rem 0;}
+ .tokchart .row{display:grid;grid-template-columns:5rem 1fr 7rem;gap:.6rem;align-items:center;margin:.25rem 0;}
+ .tokchart .bar{height:8px;background:var(--cl-ink);width:0%;min-width:2px;}
+ .tokchart .num{text-align:right;font-variant-numeric:tabular-nums;}
+ .tokchart .basis{margin:.6rem 0 0;color:var(--cl-faint);font-size:.78rem;}
+ @media (prefers-reduced-motion: reduce){ .tokchart .bar{width:var(--w);} }
+</style>
+<script>
+ (function(){
+   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+   const bars = document.querySelectorAll('.tokchart .bar');
+   if (reduced) { bars.forEach(b => b.style.setProperty('--w', b.dataset.pct + '%')); return; }
+   const fill = () => bars.forEach(b => { b.animate(
+     [{ width: '0%' }, { width: b.dataset.pct + '%' }],
+     { duration: 800, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'forwards' });
+   });
+   const io = new IntersectionObserver((es,o) => { es.forEach(e => { if (e.isIntersecting) { fill(); o.disconnect(); } }); }, { threshold: 0.4 });
+   io.observe(document.querySelector('.tokchart'));
+ })();
+</script>
 <h2>The part people miss</h2>
 <p>You don't wire tools into each agent. You curate <strong>one</strong> box and point the whole team at it. Add a tool to <code>tools.json</code> and every member can discover it through <code>tool_search</code> on the next run — no agent code changes, for any of them. Governance lives on the box, so a policy like "releases need approval" applies to the whole team at once.</p>
 <h2>Clone it</h2>

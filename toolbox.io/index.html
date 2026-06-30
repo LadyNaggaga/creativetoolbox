@@ -28,14 +28,35 @@
     /* Animation prep */
     .cl-card { opacity: 0; transform: translateX(-20px); }
     .cl-card.animated { opacity: 1; transform: translateX(0); }
+    #title { white-space: pre; }
+    #title .tw-cursor {
+      display: inline-block; width: 0.6ch; background: var(--cl-ink);
+      color: var(--cl-ink); margin-left: 1px; animation: tw-blink 1s steps(1) infinite;
+    }
+    @keyframes tw-blink { 50% { opacity: 0; } }
+    .cl-tag { display: inline-block; }
+    /* Token comparison bar on cards */
+    .tok {
+      display: grid; grid-template-columns: auto 1fr auto; gap: 0.4rem 0.6rem;
+      align-items: center; margin-top: 0.4rem; font-size: 0.82rem;
+      font-family: var(--cl-mono); color: var(--cl-faint);
+    }
+    .tok .lbl { white-space: nowrap; }
+    .tok .bar {
+      height: 6px; background: var(--cl-ink); width: 0%;
+      min-width: 2px; align-self: center;
+    }
+    .tok .num { color: var(--cl-ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .tok .save { grid-column: 1 / -1; color: var(--cl-ink); }
     @media (prefers-reduced-motion: reduce) {
       .cl-card { opacity: 1; transform: none; }
+      #title .tw-cursor { animation: none; }
     }
   </style>
 </head>
 <body class="cl">
   <main style="max-width: 980px; margin: 0 auto; padding: 2rem 1.25rem;">
-    <h1 class="cl-cursor">toolbox.io</h1>
+    <h1 id="title" class="cl-cursor"></h1>
     <p class="cl-caption">fun, cloneable demos for Toolbox with Tool Search on Foundry</p>
 
     <div class="cl-counter" aria-hidden="true">
@@ -57,11 +78,56 @@
 
     <p style="margin-top: 2rem;" class="cl-caption">built with the toolbox-demo-builder skill ·
       docs: Toolbox with Tool Search on Foundry — Microsoft Learn</p>
+    <p class="cl-caption" style="margin-top: 0.5rem; font-size: 0.78rem;">
+      token estimates: ~110 tokens per OpenAI-style tool schema, plus ~200 tokens per
+      <code>tool_search</code> round-trip. Real-world savings vary with description verbosity;
+      these are conservative.
+    </p>
   </main>
 
   <script>
     // Respect reduced motion preference
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Typewriter effect for the title
+    function typewriter(el, text) {
+      if (prefersReducedMotion) { el.textContent = text; return; }
+      const cursor = document.createElement('span');
+      cursor.className = 'tw-cursor';
+      cursor.textContent = '\u00a0';
+      el.textContent = '';
+      const textNode = document.createTextNode('');
+      el.appendChild(textNode);
+      el.appendChild(cursor);
+      const obj = { i: 0 };
+      anime({
+        targets: obj,
+        i: text.length,
+        round: 1,
+        easing: 'linear',
+        duration: 700,
+        update: () => { textNode.data = text.slice(0, obj.i); },
+        complete: () => { setTimeout(() => cursor.remove(), 1200); }
+      });
+    }
+
+    // Pulse the tool_search / call_tool chips so the "only 2 tools" pitch feels alive
+    function pulseTags() {
+      if (prefersReducedMotion) return;
+      anime({
+        targets: '.cl-tag',
+        opacity: [{ value: 1 }, { value: 0.55 }, { value: 1 }],
+        scale: [{ value: 1 }, { value: 1.06 }, { value: 1 }],
+        duration: 1600,
+        delay: anime.stagger(220),
+        easing: 'easeInOutSine',
+        loop: true,
+        direction: 'normal'
+      });
+    }
+
+    typewriter(document.getElementById('title'), 'toolbox.io');
+    pulseTags();
 
     // No build step. The gallery reads demos.json and renders cards per track.
     const NOTES = {
@@ -93,6 +159,9 @@
     function animateCards() {
       if (prefersReducedMotion) {
         document.querySelectorAll('.cl-card').forEach(c => c.classList.add('animated'));
+        document.querySelectorAll('#grid .tok .bar').forEach(b => {
+          b.style.width = (b.dataset.pct || 0) + '%';
+        });
         return;
       }
       anime({
@@ -105,6 +174,15 @@
         complete: () => {
           document.querySelectorAll('.cl-card').forEach(c => c.classList.add('animated'));
         }
+      });
+      // Animate the token bars filling from 0 to their target %
+      document.querySelectorAll('#grid .tok .bar').forEach(b => { b.style.width = '0%'; });
+      anime({
+        targets: '#grid .tok .bar',
+        width: el => (el.dataset.pct || 0) + '%',
+        duration: 700,
+        delay: anime.stagger(60, { start: 250 }),
+        easing: 'easeOutCubic'
       });
     }
 
@@ -131,10 +209,36 @@
           '<div class="cl-card cl-caption">demos.json not found</div>';
       });
 
+    // Token-cost basis (per-turn): see footnote on index for derivation.
+    const TOK_PER_SCHEMA = 110;   // typical OpenAI-style tool schema
+    const SEARCH_OVERHEAD = 200;  // tokens returned per tool_search round-trip
+
+    function computeTokens(d) {
+      if (!d.tokens || !d.boxSize) return null;
+      const { turns, pinned = 0 } = d.tokens;
+      const without = d.boxSize * TOK_PER_SCHEMA * turns;
+      const withTs  = (2 + pinned) * TOK_PER_SCHEMA * turns + turns * SEARCH_OVERHEAD;
+      const savings = Math.round((1 - withTs / without) * 100);
+      return { without, with: withTs, savings, turns };
+    }
+
+    function fmtNum(n) { return n.toLocaleString('en-US'); }
+
     function card(d) {
       const el = document.createElement('div');
       const soon = d.status === 'coming-soon';
       el.className = 'cl-card' + (soon ? ' soon' : '');
+      const tok = soon ? null : computeTokens(d);
+      const tokBlock = tok ? `
+            <div class="tok" aria-label="token comparison">
+              <span class="lbl">without</span>
+              <span class="bar" data-pct="100"></span>
+              <span class="num">${fmtNum(tok.without)} tok</span>
+              <span class="lbl">with</span>
+              <span class="bar" data-pct="${(tok.with / tok.without * 100).toFixed(1)}"></span>
+              <span class="num">${fmtNum(tok.with)} tok</span>
+              <span class="save">\u2212${tok.savings}% over ${tok.turns} turns</span>
+            </div>` : '';
       const links = soon ? '' : `
             <span>
               ${d.repo ? `<a href="${escapeAttr(d.repo)}">repo</a> \u00b7 ` : ''}
@@ -144,7 +248,7 @@
             ${soon ? '<span class="badge">coming soon</span>' : ''}
             <strong class="cl-cursor">${escapeHtml(d.title)}</strong>
             <span>${escapeHtml(d.blurb || '')}</span>
-            <span class="lean">[${escapeHtml(d.lean || 'tool-search')}]</span>${links}`;
+            <span class="lean">[${escapeHtml(d.lean || 'tool-search')}]</span>${tokBlock}${links}`;
       return el;
     }
 

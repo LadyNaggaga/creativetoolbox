@@ -36,6 +36,33 @@ tools in box: 24   ·   tools in model context: 2 (+1 pinned)
 <li><code>tool_search</code> round-trips: <strong>5</strong> (one per turn, each a different query)</li>
 <li>Lines of agent code that changed when I added a 25th tool: <strong>0</strong></li>
 </ul>
+<h3 style="margin-top:1.2rem;">Context cost: with vs. without Tool Search</h3>
+<div class="tokchart" data-without="13200" data-with="2650" data-savings="80" data-turns="5">
+  <div class="row"><span class="lbl">without</span><span class="bar" data-pct="100"></span><span class="num">13,200 tok</span></div>
+  <div class="row"><span class="lbl">with</span><span class="bar" data-pct="20.1"></span><span class="num">2,650 tok</span></div>
+  <p class="basis">&minus;80% across 5 turns. Estimate: ~110 tokens per OpenAI-style tool schema (24 tools loaded every turn without Tool Search; only <code>tool_search</code> + <code>call_tool</code> + 1 pinned with it), plus ~200 tokens per search round-trip.</p>
+</div>
+<style>
+ .tokchart{font-family:var(--cl-mono);font-size:.9rem;border:1px solid var(--cl-line);padding:.8rem 1rem;margin:.6rem 0;}
+ .tokchart .row{display:grid;grid-template-columns:5rem 1fr 7rem;gap:.6rem;align-items:center;margin:.25rem 0;}
+ .tokchart .bar{height:8px;background:var(--cl-ink);width:0%;min-width:2px;}
+ .tokchart .num{text-align:right;font-variant-numeric:tabular-nums;}
+ .tokchart .basis{margin:.6rem 0 0;color:var(--cl-faint);font-size:.78rem;}
+ @media (prefers-reduced-motion: reduce){ .tokchart .bar{width:var(--w);} }
+</style>
+<script>
+ (function(){
+   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+   const bars = document.querySelectorAll('.tokchart .bar');
+   if (reduced) { bars.forEach(b => b.style.setProperty('--w', b.dataset.pct + '%')); return; }
+   const fill = () => bars.forEach(b => { b.animate(
+     [{ width: '0%' }, { width: b.dataset.pct + '%' }],
+     { duration: 800, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'forwards' });
+   });
+   const io = new IntersectionObserver((es,o) => { es.forEach(e => { if (e.isIntersecting) { fill(); o.disconnect(); } }); }, { threshold: 0.4 });
+   io.observe(document.querySelector('.tokchart'));
+ })();
+</script>
 <h2>The part people miss</h2>
 <p>Open <code>mock-backends/tools.json</code>, add a tool, rerun. The agent code never changes — and the context counter still says 2. That is the whole managed-toolbox thesis: you reshape the tools without touching the agent. The cost of the 24th tool, to the model, is nothing.</p>
 <h2>Clone it</h2>
