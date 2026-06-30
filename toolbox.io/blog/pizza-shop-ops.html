@@ -11,10 +11,26 @@
  .cl pre{border:1px solid var(--cl-line);padding:12px 14px;overflow:auto;background:#cfcfcd;white-space:pre;}
  .cl ul{padding-left:1.2rem;} .cl li{margin:.2rem 0;}
  .nav{margin-bottom:1rem;} .nav a{color:var(--cl-ink);text-decoration:underline;}
+ .figure{border:1px solid var(--cl-line);margin:1rem 0;background:var(--cl-bg);}
+ .figure .slot,.figure svg{display:block;width:100%;height:auto;}
+ .figure figcaption{display:flex;justify-content:space-between;gap:1rem;padding:.4rem .7rem;border-top:1px solid var(--cl-line);font-family:var(--cl-mono);font-size:.78rem;color:var(--cl-faint);}
+ .figure figcaption a,.figure figcaption button{font:inherit;color:var(--cl-ink);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;}
 </style></head><body class="cl">
 <p class="nav"><a href="../index.html">&larr; back to gallery</a></p>
 <h1><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/pizza-shop-ops" style="color:inherit;text-decoration:none">I put 24 tools behind one endpoint and my pizza agent saw two</a></h1>
 <p class="nav"><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/pizza-shop-ops">view the demo code on GitHub &rarr;</a></p>
+
+<figure class="figure" id="art-figure">
+  <div class="slot" aria-label="loading art"></div>
+  <figcaption>
+    <span>// art for pizza-shop-ops · monochrome · CC0</span>
+    <span>
+      <a href="../assets/art/pizza-shop-ops.svg" download>↓ svg</a>
+      ·
+      <button type="button" id="art-png">↓ png</button>
+    </span>
+  </figcaption>
+</figure>
 <p>I gave a Friday-night pizza shop an AI line cook, stuffed 24 tools behind a single Toolbox endpoint on Foundry, and the agent ran the whole rush with exactly <strong>two</strong> tools in its context. The principle the demo is built around: <strong>big box, tiny context.</strong></p>
 <h2>What it does</h2>
 <p><code>pizza-shop-ops</code> runs the dinner rush: check the mozzarella, fire the oven, pull up a dough recipe, ring in table 12, and push three deliveries out the door. Five plain-English turns, five different stations. It runs locally with <code>make demo</code> — no Azure, no key.</p>
@@ -70,6 +86,37 @@ tools in box: 24   ·   tools in model context: 2
 <pre><code class="language-bash">git clone &lt;repo&gt; &amp;&amp; cd pizza-shop-ops &amp;&amp; make demo      # python
 make demo-dotnet                                         # C#, identical output
 </code></pre>
+<h2>Architecture</h2>
+<p>The agent never sees the 24 stations. It sees <code>tool_search</code> and <code>call_tool</code>. The box ranks the right station, and <code>oven.set_temp</code> pauses for shift-lead approval before it fires — governance lives on the box, not in the agent.</p>
+
+<figure class="figure" id="arch-figure">
+  <div class="slot" aria-label="loading diagram"></div>
+  <figcaption>
+    <span>// architecture · pizza-shop-ops</span>
+    <span>
+      <a href="../assets/diagrams/pizza-shop-ops.svg" download>↓ svg</a>
+      ·
+      <button type="button" id="arch-png">↓ png</button>
+    </span>
+  </figcaption>
+</figure>
+
 <h2>Honest caveats</h2>
 <p>Tool Search is in preview. You pay one search round-trip per intent, and the right station only surfaces if its description matches how people actually talk — <code>additional_search_text</code> is doing real work here. Approval gating adds a human in the loop by design; that is a feature, not latency to optimize away.</p>
+<script src="../assets/svg-figure.js"></script>
+<script>
+(async function () {
+  const f = window.toolboxFigure;
+  const artSvg  = await f.inlineSVG('../assets/art/pizza-shop-ops.svg',
+                                    document.querySelector('#art-figure .slot'));
+  const archSvg = await f.inlineSVG('../assets/diagrams/pizza-shop-ops.svg',
+                                    document.querySelector('#arch-figure .slot'));
+  document.getElementById('art-png').addEventListener('click', () => {
+    f.downloadPNG(artSvg, 'pizza-shop-ops--art.png', 2);
+  });
+  document.getElementById('arch-png').addEventListener('click', () => {
+    f.downloadPNG(archSvg, 'pizza-shop-ops--architecture.png', 2);
+  });
+})();
+</script>
 </body></html>

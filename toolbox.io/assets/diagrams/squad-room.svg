@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace">
+  <title>squad-room — architecture · toolbox.io</title>
+  <desc>Three agents (lead, researcher, builder) share one Toolbox endpoint. Each member's context stays at two tools. CC0.</desc>
+
+  <style>
+    .ink   { stroke: #1a1a1a; fill: none; }
+    .box   { stroke: #1a1a1a; stroke-width: 2; fill: none; }
+    .smbox { stroke: #1a1a1a; stroke-width: 1.5; fill: none; }
+    .lbl   { font-size: 14px; fill: #6b6b68; }
+    .hd    { font-size: 22px; font-weight: 700; fill: #1a1a1a; }
+    .smhd  { font-size: 15px; font-weight: 700; fill: #1a1a1a; }
+    .row   { font-size: 13px; fill: #1a1a1a; }
+    .rowf  { font-size: 12px; fill: #6b6b68; }
+    .fi    { fill: #1a1a1a; }
+    .ff    { fill: #6b6b68; }
+    .blink { animation: blink 1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* Three tokens, one per agent, traveling at different phases */
+    .ta { offset-path: path('M 320 200 L 480 320 L 720 320 L 880 200'); animation: travel 5s linear infinite; animation-delay: 0s; }
+    .tb { offset-path: path('M 320 320 L 480 320 L 720 320 L 880 320'); animation: travel 5s linear infinite; animation-delay: 1.6s; }
+    .tc { offset-path: path('M 320 440 L 480 320 L 720 320 L 880 440'); animation: travel 5s linear infinite; animation-delay: 3.3s; }
+    @keyframes travel {
+      0%   { offset-distance: 0%; opacity: 0; }
+      6%   { opacity: 1; }
+      94%  { opacity: 1; }
+      100% { offset-distance: 100%; opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ta, .tb, .tc, .blink { animation: none; }
+    }
+  </style>
+
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1a1a1a"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="630" fill="#d6d6d4"/>
+  <rect x="20" y="20" width="1160" height="590" class="box"/>
+
+  <g transform="translate(60,75)">
+    <text class="hd">&gt;_ architecture · squad-room</text>
+    <text y="30" class="lbl">three agents · one shared Toolbox · two tools in each member's context · releases.cut gated</text>
+  </g>
+
+  <!-- THREE AGENT BOXES (stacked on the left) -->
+  <!-- lead -->
+  <g transform="translate(60,160)">
+    <rect width="240" height="80" class="smbox"/>
+    <text x="12" y="22" class="lbl">// agent · model context</text>
+    <text x="12" y="44" class="smhd">lead</text>
+    <text x="12" y="66" class="row">▸ tool_search · ▸ call_tool</text>
+  </g>
+  <!-- researcher -->
+  <g transform="translate(60,280)">
+    <rect width="240" height="80" class="smbox"/>
+    <text x="12" y="22" class="lbl">// agent · model context</text>
+    <text x="12" y="44" class="smhd">researcher</text>
+    <text x="12" y="66" class="row">▸ tool_search · ▸ call_tool</text>
+  </g>
+  <!-- builder -->
+  <g transform="translate(60,400)">
+    <rect width="240" height="80" class="smbox"/>
+    <text x="12" y="22" class="lbl">// agent · model context</text>
+    <text x="12" y="44" class="smhd">builder</text>
+    <text x="12" y="66" class="row">▸ tool_search · ▸ call_tool</text>
+  </g>
+
+  <!-- shared Toolbox (center) -->
+  <g transform="translate(460,200)">
+    <rect width="280" height="240" class="box"/>
+    <text x="14" y="26" class="lbl">// shared Toolbox on Foundry</text>
+    <text x="14" y="58" class="hd">Toolbox</text>
+    <line x1="14" y1="72" x2="266" y2="72" class="ink" stroke-width="1"/>
+    <text x="14" y="104" class="row" font-size="15">▸ rank descriptions</text>
+    <text x="14" y="128" class="row" font-size="15">▸ govern + approve</text>
+    <text x="14" y="152" class="row" font-size="15">▸ dispatch call_tool</text>
+    <text x="14" y="190" class="rowf">policy: releases.cut</text>
+    <text x="14" y="208" class="rowf">→ require_approval: always</text>
+  </g>
+
+  <!-- tools.json (right) -->
+  <g transform="translate(860,160)">
+    <rect width="280" height="320" class="box"/>
+    <text x="14" y="26" class="lbl">// 24 tools (never in any member's context)</text>
+    <text x="14" y="58" class="hd">tools.json</text>
+    <line x1="14" y1="72" x2="266" y2="72" class="ink" stroke-width="1"/>
+    <text x="14" y="100" class="row">issues.assign</text>
+    <text x="14" y="120" class="row">repo.open_pr</text>
+    <text x="14" y="140" class="row">ci.run_tests</text>
+    <text x="14" y="160" class="row">kb.search_docs</text>
+    <text x="14" y="180" class="row">kb.search_code</text>
+    <text x="14" y="200" class="row">releases.cut <tspan class="ff">[approval]</tspan></text>
+    <text x="14" y="220" class="row">deploy.preview</text>
+    <text x="14" y="240" class="rowf">… 17 more</text>
+    <text x="14" y="280" class="rowf">curated once · shared by all 3 agents</text>
+  </g>
+
+  <!-- flow lines: each agent -> Toolbox -> tools -->
+  <g class="ink" stroke-width="2">
+    <line x1="300" y1="200" x2="455" y2="316" marker-end="url(#arr)"/>
+    <line x1="300" y1="320" x2="455" y2="320" marker-end="url(#arr)"/>
+    <line x1="300" y1="440" x2="455" y2="324" marker-end="url(#arr)"/>
+    <line x1="740" y1="316" x2="855" y2="200" marker-end="url(#arr)"/>
+    <line x1="740" y1="320" x2="855" y2="320" marker-end="url(#arr)"/>
+    <line x1="740" y1="324" x2="855" y2="440" marker-end="url(#arr)"/>
+  </g>
+
+  <!-- traveling tokens -->
+  <g fill="#1a1a1a">
+    <circle r="5" class="ta"/>
+    <circle r="5" class="tb"/>
+    <circle r="5" class="tc"/>
+  </g>
+
+  <!-- callout: governance applies to the whole team -->
+  <g transform="translate(60,520)">
+    <rect width="1080" height="48" fill="none" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="4 4"/>
+    <text x="20" y="29" font-size="13" fill="#1a1a1a">
+      <tspan font-weight="700">curate once, share everywhere.</tspan>
+      <tspan fill="#6b6b68"> add a tool to tools.json and every member discovers it next run.
+        a policy on the box applies to all three agents at once.</tspan>
+    </text>
+  </g>
+
+  <!-- footer -->
+  <g transform="translate(60,600)">
+    <text class="fi" font-size="14" font-weight="700">toolbox.io<tspan class="blink fi"> _</tspan></text>
+    <text x="800" class="ff" font-size="11">architecture · squad-room · CC0 · 1200×630</text>
+  </g>
+</svg>
