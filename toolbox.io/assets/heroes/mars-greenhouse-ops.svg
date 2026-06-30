@@ -2,7 +2,7 @@
   <rect width="1200" height="630" fill="#D6D6D4"/>
   <rect x="40" y="40" width="1120" height="550" fill="none" stroke="#1A1A1A" stroke-width="2"/>
 
-  <text x="80" y="130" font-family="Inter, sans-serif" font-weight="700" font-size="52" fill="#1A1A1A">&gt;_ Space Mission Control</text>
+  <text x="80" y="130" font-family="Inter, sans-serif" font-weight="700" font-size="52" fill="#1A1A1A">&gt;_ Mars Greenhouse Ops</text>
   <text x="80" y="172" font-size="22" fill="#6B6B68">// one endpoint · many tools · flat cost</text>
 
   <!-- the counter punchline -->

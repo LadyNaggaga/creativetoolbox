@@ -1,4 +1,4 @@
-# Space Mission Control — toolbox-demo-builder demo
+# Mars Greenhouse Ops — toolbox-demo-builder demo
 # `make demo` runs the magic moment with ZERO Azure and zero model key.
 
 PORT ?= 8765

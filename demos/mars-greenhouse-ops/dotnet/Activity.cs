@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace SpaceMissionControlDemo;
+namespace MarsGreenhouseOpsDemo;
 
 /// <summary>Command Line activity panel — mirrors python/activity.py exactly.</summary>
 public static class Activity

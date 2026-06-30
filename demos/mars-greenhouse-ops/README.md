@@ -1,19 +1,21 @@
-# Space Mission Control
+# Mars Greenhouse Ops
 
 > A fun, cloneable Toolbox with Tool Search on Foundry demo.
 
 ![demo](assets/demo.gif)
 
-A tiny, fun demo of **Toolbox with Tool Search on Foundry**: a big box of tools behind one
+A tiny, cheerful demo of **Toolbox with Tool Search on Foundry**: a big box of tools behind one
 endpoint, and an agent whose context never grows past **two** meta-tools no matter how big the box
-gets. Built with the `toolbox-demo-builder` skill.
+gets. You run a day in a Mars colony greenhouse — checking the air, watering the tomatoes, balancing
+the grow-lights, looking up planting tips, and updating the crew. Built with the
+`toolbox-demo-builder` skill.
 
 ## Run it in 2 minutes (no Azure)
 
 Prereqs: Python 3.10+ (and the .NET 8 SDK if you want the C# version). Nothing Azure.
 
 ```bash
-git clone <this-repo> && cd space-mission-control
+git clone <this-repo> && cd mars-greenhouse-ops
 make demo            # python
 make demo-dotnet     # C# (same scenario, same output)
 ```

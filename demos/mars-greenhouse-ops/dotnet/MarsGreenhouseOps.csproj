@@ -5,8 +5,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>SpaceMissionControlDemo</RootNamespace>
-    <AssemblyName>space-mission-control-demo</AssemblyName>
+    <RootNamespace>MarsGreenhouseOpsDemo</RootNamespace>
+    <AssemblyName>mars-greenhouse-ops-demo</AssemblyName>
   </PropertyGroup>
 
   <!-- Scripted mock mode uses only the BCL (HttpClient + System.Text.Json). -->

@@ -1,11 +1,11 @@
 {
   "local": [
     {
-      "slug": "space-mission-control",
-      "title": "Space Mission Control",
-      "blurb": "Keep three astronauts alive while the agent finds the right console \u2014 24 tools, 2 in context.",
+      "slug": "mars-greenhouse-ops",
+      "title": "Mars Greenhouse Ops",
+      "blurb": "Run a cheerful day in a Mars colony greenhouse while the agent finds the right console \u2014 24 tools, 2 in context.",
       "repo": "",
-      "blog": "blog/space-mission-control.html",
+      "blog": "blog/mars-greenhouse-ops.html",
       "lean": "pin + multi-server",
       "boxSize": 24
     },

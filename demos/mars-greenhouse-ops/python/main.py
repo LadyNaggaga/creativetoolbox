@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Space Mission Control — a toolbox-demo-builder demo.
+Mars Greenhouse Ops — a toolbox-demo-builder demo.
 
 Modes:
   (default)  scripted mock — talks to the local emulator; real ranking + real counter, no model key.
@@ -15,7 +15,7 @@ import activity
 import scenario
 
 EMU = os.environ.get("TOOLBOX_MCP_ENDPOINT",
-                     f"http://localhost:{os.environ.get('TOOLBOX_EMULATOR_PORT', '8765')}/toolboxes/space-mission-control/mcp")
+                     f"http://localhost:{os.environ.get('TOOLBOX_EMULATOR_PORT', '8765')}/toolboxes/mars-greenhouse-ops/mcp")
 TOOLS_JSON = os.path.join(os.path.dirname(__file__), "..", "mock-backends", "tools.json")
 
 
@@ -52,7 +52,7 @@ def run_scripted():
     box_size = len(json.load(open(TOOLS_JSON))["tools"])
     visible = list_tools()
     pinned = max(0, len(visible) - 2)  # everything beyond the 2 meta-tools is pinned/visible
-    activity.header("Space Mission Control")
+    activity.header("Mars Greenhouse Ops")
     activity.counter(box_size, len(visible), pinned)
 
     round_trip = 0

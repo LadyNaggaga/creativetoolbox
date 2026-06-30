@@ -13,7 +13,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 
 ENDPOINT = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-SLUG = "space-mission-control"
+SLUG = "mars-greenhouse-ops"
 TOOLS_JSON = os.path.join(os.path.dirname(__file__), "..", "mock-backends", "tools.json")
 
 
@@ -43,7 +43,7 @@ def main():
     project = AIProjectClient(endpoint=ENDPOINT, credential=DefaultAzureCredential())
     version = project.beta.toolboxes.create_toolbox_version(
         toolbox_name=SLUG,
-        description="Space Mission Control — built by toolbox-demo-builder, tool search enabled",
+        description="Mars Greenhouse Ops — built by toolbox-demo-builder, tool search enabled",
         tools=build_tools(),
     )
     print(f"created toolbox '{version.name}' version {version.version}")

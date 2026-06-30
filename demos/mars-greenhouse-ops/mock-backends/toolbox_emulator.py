@@ -133,5 +133,5 @@ def context_size():
 if __name__ == "__main__":
     print(f"toolbox-emulator: {box_size()} tools in the box, "
           f"{context_size()} in model context (search_enabled={BOX.get('search_enabled', True)})")
-    print(f"listening on http://localhost:{PORT}/toolboxes/space-mission-control/mcp")
+    print(f"listening on http://localhost:{PORT}/toolboxes/mars-greenhouse-ops/mcp")
     ThreadingHTTPServer(("127.0.0.1", PORT), Handler).serve_forever()

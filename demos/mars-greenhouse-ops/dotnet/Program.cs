@@ -1,9 +1,9 @@
 using System.Text;
 using System.Text.Json;
 
-namespace SpaceMissionControlDemo;
+namespace MarsGreenhouseOpsDemo;
 
-// Space Mission Control — a toolbox-demo-builder demo (C#).
+// Mars Greenhouse Ops — a toolbox-demo-builder demo (C#).
 // Default = scripted mock against the shared local emulator (real ranking + real counter, no key).
 // --live / --real: wire Microsoft Agent Framework + ToolboxMcpClient (see references/toolbox-api.md §5).
 
@@ -11,7 +11,7 @@ class Program
 {
     static readonly HttpClient Http = new();
     static readonly string Emu = Environment.GetEnvironmentVariable("TOOLBOX_MCP_ENDPOINT")
-        ?? $"http://localhost:{Environment.GetEnvironmentVariable("TOOLBOX_EMULATOR_PORT") ?? "8765"}/toolboxes/space-mission-control/mcp";
+        ?? $"http://localhost:{Environment.GetEnvironmentVariable("TOOLBOX_EMULATOR_PORT") ?? "8765"}/toolboxes/mars-greenhouse-ops/mcp";
     static int _id = 0;
 
     static async Task Main(string[] args)
@@ -32,7 +32,7 @@ class Program
 
         var visible = await ListTools();
         int pinned = Math.Max(0, visible.Count - 2);
-        Activity.Header("Space Mission Control");
+        Activity.Header("Mars Greenhouse Ops");
         Activity.Counter(boxSize, visible.Count, pinned);
 
         int roundTrip = 0;

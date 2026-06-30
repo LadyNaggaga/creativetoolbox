@@ -4,7 +4,7 @@
 // using Azure.Identity;
 // using Azure.AI.Projects;
 //
-// namespace SpaceMissionControlDemo;
+// namespace MarsGreenhouseOpsDemo;
 //
 // public static class ToolboxSetup
 // {
@@ -18,18 +18,18 @@
 //         // Build the tool list from ../mock-backends/tools.json so it matches the demo.
 //         ProjectsAgentTool searchPreview = ProjectsAgentTool.FromTypeDirective("toolbox_search_preview");
 //         ProjectsAgentTool mcp = ProjectsAgentTool.AsProjectTool(ResponseTool.CreateMcpTool(
-//             serverLabel: "space-mission-control".Replace("-", ""),
+//             serverLabel: "mars-greenhouse-ops".Replace("-", ""),
 //             serverUri: new Uri(Environment.GetEnvironmentVariable("THEME_MCP_SERVER_URL")!),
 //             toolCallApprovalPolicy: new McpToolCallApprovalPolicy(
 //                 GlobalMcpToolCallApprovalPolicy.NeverRequireApproval)));
 //
 //         ToolboxVersion v = await toolboxes.CreateToolboxVersionAsync(
-//             toolboxName: "space-mission-control",
+//             toolboxName: "mars-greenhouse-ops",
 //             tools: [searchPreview, mcp],
-//             description: "Space Mission Control — built by toolbox-demo-builder, tool search enabled");
+//             description: "Mars Greenhouse Ops — built by toolbox-demo-builder, tool search enabled");
 //
 //         Console.WriteLine($"created toolbox '{v.Name}' version {v.Version}");
-//         Console.WriteLine($"consumer endpoint: {endpoint}/toolboxes/space-mission-control/mcp?api-version=v1");
+//         Console.WriteLine($"consumer endpoint: {endpoint}/toolboxes/mars-greenhouse-ops/mcp?api-version=v1");
 //     }
 // }
 //

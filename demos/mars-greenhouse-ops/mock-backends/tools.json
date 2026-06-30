@@ -1,0 +1,31 @@
+{
+  "search_enabled": true,
+  "_comment": "THE BOX for mars-greenhouse-ops. Tools span themed MCP servers (sensors, irrigation, power, kb, notify, harvest, climate, lighting, nutrients, crops, pests, seeds). Hero tools have rich descriptions + additional_search_text and live in hero_tools/. sensors.read_air is PINNED to show the pin feature. The rest are name+description only so the box is honestly large.",
+  "tools": [
+    { "name": "sensors.read_air", "description": "Read the dome's current CO2, oxygen, and humidity for the growing area; use when someone asks how the air is, whether the plants have enough CO2, if it's too humid, or if the greenhouse atmosphere looks healthy.", "additional_search_text": "air quality co2 carbon dioxide oxygen humidity dome atmosphere greenhouse photosynthesis plants stuffy", "pin": true },
+    { "name": "irrigation.schedule", "description": "Plan and schedule a watering / drip-irrigation cycle for a planting bed; returns water volume, duration, target soil moisture and the next cycle time.", "additional_search_text": "water watering irrigation drip soak thirsty bed soil moisture schedule cycle hydrate plants tomatoes" },
+    { "name": "power.balance_load", "description": "Rebalance the greenhouse power budget across grow-lights, fans and pumps when solar/battery draw is tight; dims non-critical loads while protecting the grow-lights.", "additional_search_text": "electrical power budget battery solar grow lights load shed amps watts draw distribute energy panels" },
+    { "name": "kb.search_guides", "description": "Search the planting and plant-care guide library; use for any how-do-I-grow-X, how-deep-to-sow, spacing, or care-tips request.", "additional_search_text": "guide how to grow planting care sow seed depth spacing germination tips manual handbook basil tomato lettuce" },
+    { "name": "notify.crew", "description": "Post a friendly status note or harvest update to the colony crew board (the rest of the Mars team).", "additional_search_text": "message crew colony team notify post board tell everyone share update announce gardener status note" },
+    { "name": "harvest.log", "description": "Look up the harvest log: what was picked, how much, and which bed it came from for a given crop or day." },
+
+    { "name": "sensors.read_soil", "description": "Read soil moisture for a planting bed." },
+    { "name": "sensors.read_light", "description": "Read PAR (photosynthetic light) levels in the dome." },
+    { "name": "climate.set_temp", "description": "Set the dome temperature setpoint." },
+    { "name": "climate.read_humidity", "description": "Read the current dome humidity." },
+    { "name": "lighting.set_schedule", "description": "Set the grow-light photoperiod schedule." },
+    { "name": "lighting.read_par", "description": "Read current grow-light PAR output." },
+    { "name": "irrigation.read_flow", "description": "Read the irrigation water flow rate." },
+    { "name": "irrigation.purge_line", "description": "Purge a clogged drip line." },
+    { "name": "power.read_battery", "description": "Read battery state of charge." },
+    { "name": "power.read_solar", "description": "Read solar array output." },
+    { "name": "nutrients.dose", "description": "Dose hydroponic nutrient solution into a reservoir." },
+    { "name": "nutrients.read_ph", "description": "Read the nutrient reservoir pH." },
+    { "name": "harvest.schedule_task", "description": "Schedule a harvesting task on the crew timeline." },
+    { "name": "crops.read_growth", "description": "Read the growth stage of a crop bed." },
+    { "name": "pests.scan", "description": "Scan a bed for pests or disease." },
+    { "name": "pests.treat", "description": "Apply biocontrol treatment to a bed." },
+    { "name": "kb.search_pests", "description": "Search the pest and plant-disease database." },
+    { "name": "seeds.plant", "description": "Start a new seed tray for germination." }
+  ]
+}
