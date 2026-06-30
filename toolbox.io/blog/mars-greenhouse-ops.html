@@ -11,10 +11,27 @@
  .cl pre{border:1px solid var(--cl-line);padding:12px 14px;overflow:auto;background:#cfcfcd;white-space:pre;}
  .cl ul{padding-left:1.2rem;} .cl li{margin:.2rem 0;}
  .nav{margin-bottom:1rem;} .nav a{color:var(--cl-ink);text-decoration:underline;}
+ .figure{border:1px solid var(--cl-line);margin:1rem 0;background:var(--cl-bg);}
+ .figure .slot,.figure svg{display:block;width:100%;height:auto;}
+ .figure figcaption{display:flex;justify-content:space-between;gap:1rem;padding:.4rem .7rem;border-top:1px solid var(--cl-line);font-family:var(--cl-mono);font-size:.78rem;color:var(--cl-faint);}
+ .figure figcaption a,.figure figcaption button{font:inherit;color:var(--cl-ink);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;}
 </style></head><body class="cl">
 <p class="nav"><a href="../index.html">&larr; back to gallery</a></p>
 <h1><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/mars-greenhouse-ops" style="color:inherit;text-decoration:none">I gave my greenhouse agent 24 tools and it only ever saw two</a></h1>
 <p class="nav"><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/mars-greenhouse-ops">view the demo code on GitHub &rarr;</a></p>
+
+<figure class="figure" id="art-figure">
+  <div class="slot" aria-label="loading art"></div>
+  <figcaption>
+    <span>// art for mars-greenhouse-ops · monochrome · CC0</span>
+    <span>
+      <a href="../assets/art/mars-greenhouse-ops.svg" download>↓ svg</a>
+      ·
+      <button type="button" id="art-png">↓ png</button>
+    </span>
+  </figcaption>
+</figure>
+
 <p>I wired a Mars colony greenhouse up to a Toolbox on Foundry, dropped 24 tools into the box, and watched the agent run a whole day in the dome with exactly <strong>two</strong> tools in its context the entire time. The principle the demo is built around: <strong>big box, tiny context.</strong></p>
 <h2>What it does</h2>
 <p><code>mars-greenhouse-ops</code> is a tiny, cloneable agent that runs a cheerful day in a Mars greenhouse: you check the dome air, give the thirsty tomatoes a drink, balance the grow-lights against the solar budget, look up how deep to sow the basil, and post a harvest update to the crew. Five plain-English turns, each needing a <em>different</em> console. The whole thing runs locally with <code>make demo</code> — no Azure, no key, no token.</p>
@@ -70,6 +87,39 @@ tools in box: 24   ·   tools in model context: 2 (+1 pinned)
 make demo-dotnet                                                # C#, identical output
 </code></pre>
 <p>Python and C# produce the exact same trace — the box and the scenario are shared; only the language of the client differs.</p>
+<h2>Architecture</h2>
+<p>The agent never sees the 24 tools. It sees <code>tool_search</code> and <code>call_tool</code> — plus <code>sensors.read_air</code>, which I marked <em>pinned</em> because every turn opens by checking dome air. Everything else lives on the box.</p>
+
+<figure class="figure" id="arch-figure">
+  <div class="slot" aria-label="loading diagram"></div>
+  <figcaption>
+    <span>// architecture · mars-greenhouse-ops</span>
+    <span>
+      <a href="../assets/diagrams/mars-greenhouse-ops.svg" download>↓ svg</a>
+      ·
+      <button type="button" id="arch-png">↓ png</button>
+    </span>
+  </figcaption>
+</figure>
+
 <h2>Honest caveats</h2>
 <p>Tool Search is in preview. It buys flat context at the price of one search round-trip per intent, and match quality is <em>entirely</em> as good as your tool descriptions — a vague description and the right console will not surface on camera. Worth it the moment a box has more than ~10 tools. Below that, just hand the model the tools.</p>
+<script src="../assets/svg-figure.js"></script>
+<script>
+(async function () {
+  const f = window.toolboxFigure;
+
+  const artSvg  = await f.inlineSVG('../assets/art/mars-greenhouse-ops.svg',
+                                    document.querySelector('#art-figure .slot'));
+  const archSvg = await f.inlineSVG('../assets/diagrams/mars-greenhouse-ops.svg',
+                                    document.querySelector('#arch-figure .slot'));
+
+  document.getElementById('art-png').addEventListener('click', () => {
+    f.downloadPNG(artSvg, 'mars-greenhouse-ops--art.png', 2);
+  });
+  document.getElementById('arch-png').addEventListener('click', () => {
+    f.downloadPNG(archSvg, 'mars-greenhouse-ops--architecture.png', 2);
+  });
+})();
+</script>
 </body></html>
