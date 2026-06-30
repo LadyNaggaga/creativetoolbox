@@ -9,6 +9,7 @@
   <link rel="alternate icon" href="assets/favicon.ico" sizes="any" />
   <link rel="apple-touch-icon" href="assets/favicon-180.png" />
   <link rel="stylesheet" href="assets/commandline.css" />
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
   <style>
     .cl-tabs { display: flex; gap: 0; margin: 0.5rem 0 0.25rem; }
     .cl-tabs button {
@@ -23,6 +24,12 @@
     .cl-card .badge {
       align-self: flex-start; font-size: 0.72em; letter-spacing: 0.04em;
       border: 1px solid var(--cl-line); padding: 0 0.4ch; text-transform: uppercase;
+    }
+    /* Animation prep */
+    .cl-card { opacity: 0; transform: translateX(-20px); }
+    .cl-card.animated { opacity: 1; transform: translateX(0); }
+    @media (prefers-reduced-motion: reduce) {
+      .cl-card { opacity: 1; transform: none; }
     }
   </style>
 </head>
@@ -53,6 +60,9 @@
   </main>
 
   <script>
+    // Respect reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     // No build step. The gallery reads demos.json and renders cards per track.
     const NOTES = {
       local: 'Runs offline against a local mock emulator \u2014 no Azure, no key. Clone it and run make demo.',
@@ -61,6 +71,42 @@
     };
     const TRACKS = ['local', 'cloud', 'share'];
     let DATA = { local: [], cloud: [], share: [] };
+
+    // Counter roll-up animation
+    function animateCounter(target, endValue) {
+      if (prefersReducedMotion) {
+        target.textContent = endValue;
+        return;
+      }
+      const obj = { value: 0 };
+      anime({
+        targets: obj,
+        value: endValue,
+        round: 1,
+        easing: 'easeOutExpo',
+        duration: 1200,
+        update: () => { target.textContent = obj.value; }
+      });
+    }
+
+    // Card stagger reveal animation
+    function animateCards() {
+      if (prefersReducedMotion) {
+        document.querySelectorAll('.cl-card').forEach(c => c.classList.add('animated'));
+        return;
+      }
+      anime({
+        targets: '#grid .cl-card',
+        translateX: [-20, 0],
+        opacity: [0, 1],
+        duration: 350,
+        delay: anime.stagger(80),
+        easing: 'easeOutQuad',
+        complete: () => {
+          document.querySelectorAll('.cl-card').forEach(c => c.classList.add('animated'));
+        }
+      });
+    }
 
     fetch('demos.json')
       .then(r => r.json())
@@ -73,10 +119,12 @@
         };
         const maxBox = [...DATA.local, ...DATA.cloud, ...DATA.share]
           .reduce((m, d) => d.boxSize ? Math.max(m, d.boxSize) : m, 0);
-        if (maxBox) document.getElementById('boxN').textContent = maxBox;
+        if (maxBox) {
+          animateCounter(document.getElementById('boxN'), maxBox);
+        }
 
         const initial = location.hash.replace('#', '');
-        render(TRACKS.includes(initial) ? initial : 'local');
+        render(TRACKS.includes(initial) ? initial : 'local', true);
       })
       .catch(() => {
         document.getElementById('grid').innerHTML =
@@ -100,12 +148,37 @@
       return el;
     }
 
-    function render(track) {
+    function render(track, isInitial = false) {
       const grid = document.getElementById('grid');
       const list = DATA[track] || [];
+
+      // If switching tabs (not initial load), animate out first
+      if (!isInitial && !prefersReducedMotion && grid.children.length > 0) {
+        anime({
+          targets: '#grid .cl-card',
+          opacity: 0,
+          translateX: 20,
+          duration: 150,
+          easing: 'easeInQuad',
+          complete: () => {
+            renderCards(grid, list, track);
+            animateCards();
+          }
+        });
+        return;
+      }
+
+      renderCards(grid, list, track);
+      if (isInitial) animateCards();
+    }
+
+    function renderCards(grid, list, track) {
       grid.innerHTML = '';
       if (!list.length) {
-        grid.innerHTML = '<div class="cl-card cl-caption">no demos yet</div>';
+        const empty = document.createElement('div');
+        empty.className = 'cl-card cl-caption animated';
+        empty.textContent = 'no demos yet';
+        grid.appendChild(empty);
       } else {
         list.forEach(d => grid.appendChild(card(d)));
       }
