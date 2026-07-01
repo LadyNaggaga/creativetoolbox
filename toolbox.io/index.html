@@ -242,7 +242,7 @@
       const links = soon ? '' : `
             <span>
               ${d.repo ? `<a href="${escapeAttr(d.repo)}">repo</a> \u00b7 ` : ''}
-              ${d.blog ? `<a href="${escapeAttr(d.blog)}">blog</a>` : ''}
+              ${d.blog ? `<a href="${escapeAttr(d.blog)}">notes</a>` : ''}
             </span>`;
       el.innerHTML = `
             ${soon ? '<span class="badge">coming soon</span>' : ''}

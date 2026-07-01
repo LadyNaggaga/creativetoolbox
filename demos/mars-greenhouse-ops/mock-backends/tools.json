@@ -26,6 +26,14 @@
     { "name": "pests.scan", "description": "Scan a bed for pests or disease." },
     { "name": "pests.treat", "description": "Apply biocontrol treatment to a bed." },
     { "name": "kb.search_pests", "description": "Search the pest and plant-disease database." },
-    { "name": "seeds.plant", "description": "Start a new seed tray for germination." }
+    { "name": "seeds.plant", "description": "Start a new seed tray for germination." },
+    { "name": "seeds.read_inventory", "description": "Read the seed bank inventory." },
+    { "name": "climate.read_temp", "description": "Read the current dome temperature." },
+    { "name": "climate.vent", "description": "Open dome vents to shed heat or humidity." },
+    { "name": "power.forecast", "description": "Forecast solar production for the next 24 hours." },
+    { "name": "notify.mission_control", "description": "Send a status ping to Earth mission control." },
+    { "name": "kb.search_nutrients", "description": "Search the hydroponic nutrient reference." },
+    { "name": "harvest.read_yield", "description": "Read cumulative yield for a crop this cycle." },
+    { "name": "crops.rotate_bed", "description": "Rotate a bed to the next crop in the plan." }
   ]
 }

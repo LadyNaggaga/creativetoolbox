@@ -8,7 +8,7 @@
   <!-- the counter punchline -->
   <g transform="translate(80,250)">
     <rect x="0" y="0" width="470" height="120" fill="none" stroke="#1A1A1A" stroke-width="2"/>
-    <text x="30" y="55" font-size="64" font-weight="700" fill="#1A1A1A">24</text>
+    <text x="30" y="55" font-size="64" font-weight="700" fill="#1A1A1A">18</text>
     <text x="30" y="95" font-size="22" fill="#6B6B68">tools in the box</text>
 
     <rect x="560" y="0" width="470" height="120" fill="none" stroke="#1A1A1A" stroke-width="2"/>

@@ -48,7 +48,7 @@
 
   <g transform="translate(60,75)">
     <text class="hd">&gt;_ architecture · pizza-shop-ops</text>
-    <text y="30" class="lbl">one search per intent · oven.set_temp gated · 24 stations in the box</text>
+    <text y="30" class="lbl">one search per intent · oven.set_temp gated · 18 stations in the box</text>
   </g>
 
   <!-- BOX 1: agent -->
@@ -80,7 +80,7 @@
   <!-- BOX 3: tools.json -->
   <g transform="translate(860,180)">
     <rect width="280" height="280" class="box"/>
-    <text x="14" y="26" class="lbl">// 24 stations (never in model context)</text>
+    <text x="14" y="26" class="lbl">// 18 stations (never in model context)</text>
     <text x="14" y="58" class="hd">tools.json</text>
     <line x1="14" y1="72" x2="266" y2="72" class="ink" stroke-width="1"/>
     <text x="14" y="98"  class="row" font-size="13">oven.set_temp <tspan class="ff">[approval]</tspan></text>

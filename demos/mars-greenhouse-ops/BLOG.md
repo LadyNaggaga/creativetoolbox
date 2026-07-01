@@ -1,6 +1,6 @@
-# I gave my greenhouse agent 24 tools and it only ever saw two
+# I gave my greenhouse agent 32 tools and it only ever saw two
 
-I wired a Mars colony greenhouse up to a Toolbox on Foundry, dropped 24 tools into the box, and watched the agent run a whole day in the dome with exactly **two** tools in its context the entire time. The principle the demo is built around: **big box, tiny context.**
+I wired a Mars colony greenhouse up to a Toolbox on Foundry, dropped 32 tools into the box, and watched the agent run a whole day in the dome with exactly **two** tools in its context the entire time. The principle the demo is built around: **big box, tiny context.**
 
 ## What it does
 
@@ -18,21 +18,21 @@ The toolbox has `{"type": "toolbox_search_preview"}` turned on. That hides every
    [matched]     kb.search_guides, kb.search_pests, harvest.log, seeds.plant
    [call_tool]   kb.search_guides({ "topic": "basil" })
    => Guide for basil: sow 6 mm deep, 20 cm spacing, germinates in 5-7 days at 21 C ...
-tools in box: 24   ·   tools in model context: 2 (+1 pinned)
+tools in box: 32   ·   tools in model context: 2 (+1 pinned)
 ```
 
 The matching is **not faked**: the local emulator ranks the actual tool descriptions, and `kb.search_guides` surfaces first every time because its description speaks the gardener's vocabulary ("how do I grow X", "how deep to sow").
 
 ## The numbers
 
-- Tools in the box: **24**
+- Tools in the box: **32**
 - Tools in the model context: **2** (`tool_search` + `call_tool`) + **1 pinned**
 - `tool_search` round-trips: **5** (one per turn, each a different query)
-- Lines of agent code that changed when I added a 25th tool: **0**
+- Lines of agent code that changed when I added a 33rd tool: **0**
 
 ## The part people miss
 
-Open `mock-backends/tools.json`, add a tool, rerun. The agent code never changes — and the context counter still says 2. That is the whole managed-toolbox thesis: you reshape the tools without touching the agent. The cost of the 24th tool, to the model, is nothing.
+Open `mock-backends/tools.json`, add a tool, rerun. The agent code never changes — and the context counter still says 2. That is the whole managed-toolbox thesis: you reshape the tools without touching the agent. The cost of the 32nd tool, to the model, is nothing.
 
 ## Clone it
 

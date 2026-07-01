@@ -18,14 +18,8 @@
     { "name": "kb.search_allergens", "description": "Look up allergen info for a menu item." },
     { "name": "kb.search_safety", "description": "Search food-safety and handling procedures." },
     { "name": "customers.lookup", "description": "Look up a customer by name or phone." },
-    { "name": "customers.add_loyalty", "description": "Add loyalty points to a customer." },
     { "name": "billing.create_invoice", "description": "Create an invoice for an order." },
-    { "name": "billing.apply_discount", "description": "Apply a discount code to a ticket." },
-    { "name": "delivery.track", "description": "Track a driver's live location." },
     { "name": "delivery.estimate_eta", "description": "Estimate delivery ETA for an address." },
-    { "name": "comms.notify_customer", "description": "Text a customer about their order." },
-    { "name": "comms.page_kitchen", "description": "Page a message to the kitchen line." },
-    { "name": "shifts.who_is_on", "description": "List who is currently on shift." },
-    { "name": "reports.daily_summary", "description": "Generate the end-of-day sales summary." }
+    { "name": "comms.page_kitchen", "description": "Page a message to the kitchen line." }
   ]
 }

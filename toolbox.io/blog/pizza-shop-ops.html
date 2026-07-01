@@ -17,7 +17,7 @@
  .figure figcaption a,.figure figcaption button{font:inherit;color:var(--cl-ink);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;}
 </style></head><body class="cl">
 <p class="nav"><a href="../index.html">&larr; back to gallery</a></p>
-<h1><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/pizza-shop-ops" style="color:inherit;text-decoration:none">I put 24 tools behind one endpoint and my pizza agent saw two</a></h1>
+<h1><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/pizza-shop-ops" style="color:inherit;text-decoration:none">I put 18 tools behind one endpoint and my pizza agent saw two</a></h1>
 <p class="nav"><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/pizza-shop-ops">view the demo code on GitHub &rarr;</a></p>
 
 <figure class="figure" id="art-figure">
@@ -31,7 +31,7 @@
     </span>
   </figcaption>
 </figure>
-<p>I gave a Friday-night pizza shop an AI line cook, stuffed 24 tools behind a single Toolbox endpoint on Foundry, and the agent ran the whole rush with exactly <strong>two</strong> tools in its context. The principle the demo is built around: <strong>big box, tiny context.</strong></p>
+<p>I gave a Friday-night pizza shop an AI line cook, stuffed 18 tools behind a single Toolbox endpoint on Foundry, and the agent ran the whole rush with exactly <strong>two</strong> tools in its context. The principle the demo is built around: <strong>big box, tiny context.</strong></p>
 <h2>What it does</h2>
 <p><code>pizza-shop-ops</code> runs the dinner rush: check the mozzarella, fire the oven, pull up a dough recipe, ring in table 12, and push three deliveries out the door. Five plain-English turns, five different stations. It runs locally with <code>make demo</code> — no Azure, no key.</p>
 <p><img src="../assets/gifs/pizza-shop-ops.gif" alt="Pizza Shop Ops demo: Tool Search picks the station, approval gates the oven" style="max-width:100%;display:block;border:1px solid var(--cl-line)"></p>
@@ -42,22 +42,22 @@
    [matched]     oven.set_temp, oven.read_temp, delivery.assign_driver, inventory.check_stock
    [call_tool]   oven.set_temp({ &quot;temp&quot;: 475, &quot;style&quot;: &quot;Neapolitan&quot; })
    =&gt; [approval required] oven.set_temp is gated. Shift-lead approved -&gt; preheating to 475F.
-tools in box: 24   ·   tools in model context: 2
+tools in box: 18   ·   tools in model context: 2
 </code></pre>
 <p>The matching is real: the emulator ranks the actual descriptions, and <code>oven.set_temp</code> wins over the near-miss <code>oven.read_temp</code> because its description and <code>additional_search_text</code> carry the colloquial "fire up / crank up / turn on the oven."</p>
 <h2>The numbers</h2>
 <ul>
-<li>Tools in the box: <strong>24</strong></li>
+<li>Tools in the box: <strong>18</strong></li>
 <li>Tools in the model context: <strong>2</strong> (<code>tool_search</code> + <code>call_tool</code>)</li>
 <li><code>tool_search</code> round-trips: <strong>5</strong></li>
 <li>Guarded tools that paused for approval: <strong>1</strong> (<code>oven.set_temp</code>)</li>
-<li>Lines of agent code that changed when I added a 25th tool: <strong>0</strong></li>
+<li>Lines of agent code that changed when I added a 19th tool: <strong>0</strong></li>
 </ul>
 <h3 style="margin-top:1.2rem;">Context cost: with vs. without Tool Search</h3>
 <div class="tokchart">
   <div class="row"><span class="lbl">without</span><span class="bar" data-pct="100"></span><span class="num">13,200 tok</span></div>
   <div class="row"><span class="lbl">with</span><span class="bar" data-pct="15.9"></span><span class="num">2,100 tok</span></div>
-  <p class="basis">&minus;84% across 5 turns. Estimate: ~110 tokens per OpenAI-style tool schema (24 tools loaded every turn without Tool Search; just <code>tool_search</code> + <code>call_tool</code> with it), plus ~200 tokens per search round-trip.</p>
+  <p class="basis">&minus;84% across 5 turns. Estimate: ~110 tokens per OpenAI-style tool schema (18 tools loaded every turn without Tool Search; just <code>tool_search</code> + <code>call_tool</code> with it), plus ~200 tokens per search round-trip.</p>
 </div>
 <style>
  .tokchart{font-family:var(--cl-mono);font-size:.9rem;border:1px solid var(--cl-line);padding:.8rem 1rem;margin:.6rem 0;}
@@ -87,7 +87,7 @@ tools in box: 24   ·   tools in model context: 2
 make demo-dotnet                                         # C#, identical output
 </code></pre>
 <h2>Architecture</h2>
-<p>The agent never sees the 24 stations. It sees <code>tool_search</code> and <code>call_tool</code>. The box ranks the right station, and <code>oven.set_temp</code> pauses for shift-lead approval before it fires — governance lives on the box, not in the agent.</p>
+<p>The agent never sees the 18 stations. It sees <code>tool_search</code> and <code>call_tool</code>. The box ranks the right station, and <code>oven.set_temp</code> pauses for shift-lead approval before it fires — governance lives on the box, not in the agent.</p>
 
 <figure class="figure" id="arch-figure">
   <div class="slot" aria-label="loading diagram"></div>

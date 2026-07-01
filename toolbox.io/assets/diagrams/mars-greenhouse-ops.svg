@@ -76,7 +76,7 @@
   <!-- BOX 3: tools.json -->
   <g transform="translate(860,180)">
     <rect width="280" height="280" class="box"/>
-    <text x="14" y="26" class="lbl">// 24 tools (never in model context)</text>
+    <text x="14" y="26" class="lbl">// 32 tools (never in model context)</text>
     <text x="14" y="58" class="hd">tools.json</text>
     <line x1="14" y1="72" x2="266" y2="72" class="ink" stroke-width="1"/>
     <text x="14" y="98"  class="row" font-size="13">sensors.read_air <tspan class="ff">[pinned]</tspan></text>

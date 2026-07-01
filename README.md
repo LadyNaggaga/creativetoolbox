@@ -18,9 +18,9 @@ Each demo runs offline against a local mock emulator—no Azure, no API key. Clo
 
 | Demo | Description | Tools |
 |------|-------------|-------|
-| [Mars Greenhouse Ops](./demos/mars-greenhouse-ops) | Run a cheerful day in a Mars colony greenhouse—checking air, watering tomatoes, balancing grow-lights | 24 |
-| [Pizza Shop Ops](./demos/pizza-shop-ops) | Handle the Friday rush without dropping a pie—Tool Search picks the station, approval gates the oven | 24 |
-| [Squad Room](./demos/squad-room) | A whole AI team (lead, researcher, builder) shares one governed Toolbox | 24 |
+| [Mars Greenhouse Ops](./demos/mars-greenhouse-ops) | Run a cheerful day in a Mars colony greenhouse—checking air, watering tomatoes, balancing grow-lights | 32 |
+| [Pizza Shop Ops](./demos/pizza-shop-ops) | Handle the Friday rush without dropping a pie—Tool Search picks the station, approval gates the oven | 18 |
+| [Squad Room](./demos/squad-room) | A whole AI team (lead, researcher, builder) shares one governed Toolbox | 48 |
 
 ### Quick Start
 

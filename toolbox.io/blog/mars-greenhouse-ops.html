@@ -17,7 +17,7 @@
  .figure figcaption a,.figure figcaption button{font:inherit;color:var(--cl-ink);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;}
 </style></head><body class="cl">
 <p class="nav"><a href="../index.html">&larr; back to gallery</a></p>
-<h1><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/mars-greenhouse-ops" style="color:inherit;text-decoration:none">I gave my greenhouse agent 24 tools and it only ever saw two</a></h1>
+<h1><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/mars-greenhouse-ops" style="color:inherit;text-decoration:none">I gave my greenhouse agent 32 tools and it only ever saw two</a></h1>
 <p class="nav"><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/mars-greenhouse-ops">view the demo code on GitHub &rarr;</a></p>
 
 <figure class="figure" id="art-figure">
@@ -32,10 +32,10 @@
   </figcaption>
 </figure>
 
-<p>I wired a Mars colony greenhouse up to a Toolbox on Foundry, dropped 24 tools into the box, and watched the agent run a whole day in the dome with exactly <strong>two</strong> tools in its context the entire time. The principle the demo is built around: <strong>big box, tiny context.</strong></p>
+<p>I wired a Mars colony greenhouse up to a Toolbox on Foundry, dropped 32 tools into the box, and watched the agent run a whole day in the dome with exactly <strong>two</strong> tools in its context the entire time. The principle the demo is built around: <strong>big box, tiny context.</strong></p>
 <h2>What it does</h2>
 <p><code>mars-greenhouse-ops</code> is a tiny, cloneable agent that runs a cheerful day in a Mars greenhouse: you check the dome air, give the thirsty tomatoes a drink, balance the grow-lights against the solar budget, look up how deep to sow the basil, and post a harvest update to the crew. Five plain-English turns, each needing a <em>different</em> console. The whole thing runs locally with <code>make demo</code> — no Azure, no key, no token.</p>
-<p><img src="../assets/gifs/mars-greenhouse-ops.gif" alt="Mars Greenhouse Ops demo: the agent finds the right console among 24 tools" style="max-width:100%;display:block;border:1px solid var(--cl-line)"></p>
+<p><img src="../assets/gifs/mars-greenhouse-ops.gif" alt="Mars Greenhouse Ops demo: the agent finds the right console among 32 tools" style="max-width:100%;display:block;border:1px solid var(--cl-line)"></p>
 <h2>The trick</h2>
 <p>The toolbox has <code>{"type": "toolbox_search_preview"}</code> turned on. That hides every real tool and gives the model two meta-tools instead: <code>tool_search</code> (describe what you need in words) and <code>call_tool</code> (invoke it by name). So no matter how many consoles sit behind the box, the model context stays flat. One tool, <code>sensors.read_air</code>, is <strong>pinned</strong> — always visible — which is why the counter reads <code>2 (+1 pinned)</code>.</p>
 <pre><code>&gt;_ user: &quot;wait — how deep should I actually be sowing the basil seeds?&quot;
@@ -43,21 +43,21 @@
    [matched]     kb.search_guides, kb.search_pests, harvest.log, seeds.plant
    [call_tool]   kb.search_guides({ &quot;topic&quot;: &quot;basil&quot; })
    =&gt; Guide for basil: sow 6 mm deep, 20 cm spacing, germinates in 5-7 days at 21 C ...
-tools in box: 24   ·   tools in model context: 2 (+1 pinned)
+tools in box: 32   ·   tools in model context: 2 (+1 pinned)
 </code></pre>
 <p>The matching is <strong>not faked</strong>: the local emulator ranks the actual tool descriptions, and <code>kb.search_guides</code> surfaces first every time because its description speaks the gardener's vocabulary ("how do I grow X", "how deep to sow").</p>
 <h2>The numbers</h2>
 <ul>
-<li>Tools in the box: <strong>24</strong></li>
+<li>Tools in the box: <strong>32</strong></li>
 <li>Tools in the model context: <strong>2</strong> (<code>tool_search</code> + <code>call_tool</code>) + <strong>1 pinned</strong></li>
 <li><code>tool_search</code> round-trips: <strong>5</strong> (one per turn, each a different query)</li>
-<li>Lines of agent code that changed when I added a 25th tool: <strong>0</strong></li>
+<li>Lines of agent code that changed when I added a 33rd tool: <strong>0</strong></li>
 </ul>
 <h3 style="margin-top:1.2rem;">Context cost: with vs. without Tool Search</h3>
 <div class="tokchart" data-without="13200" data-with="2650" data-savings="80" data-turns="5">
   <div class="row"><span class="lbl">without</span><span class="bar" data-pct="100"></span><span class="num">13,200 tok</span></div>
   <div class="row"><span class="lbl">with</span><span class="bar" data-pct="20.1"></span><span class="num">2,650 tok</span></div>
-  <p class="basis">&minus;80% across 5 turns. Estimate: ~110 tokens per OpenAI-style tool schema (24 tools loaded every turn without Tool Search; only <code>tool_search</code> + <code>call_tool</code> + 1 pinned with it), plus ~200 tokens per search round-trip.</p>
+  <p class="basis">&minus;80% across 5 turns. Estimate: ~110 tokens per OpenAI-style tool schema (32 tools loaded every turn without Tool Search; only <code>tool_search</code> + <code>call_tool</code> + 1 pinned with it), plus ~200 tokens per search round-trip.</p>
 </div>
 <style>
  .tokchart{font-family:var(--cl-mono);font-size:.9rem;border:1px solid var(--cl-line);padding:.8rem 1rem;margin:.6rem 0;}
@@ -88,7 +88,7 @@ make demo-dotnet                                                # C#, identical 
 </code></pre>
 <p>Python and C# produce the exact same trace — the box and the scenario are shared; only the language of the client differs.</p>
 <h2>Architecture</h2>
-<p>The agent never sees the 24 tools. It sees <code>tool_search</code> and <code>call_tool</code> — plus <code>sensors.read_air</code>, which I marked <em>pinned</em> because every turn opens by checking dome air. Everything else lives on the box.</p>
+<p>The agent never sees the 32 tools. It sees <code>tool_search</code> and <code>call_tool</code> — plus <code>sensors.read_air</code>, which I marked <em>pinned</em> because every turn opens by checking dome air. Everything else lives on the box.</p>
 
 <figure class="figure" id="arch-figure">
   <div class="slot" aria-label="loading diagram"></div>

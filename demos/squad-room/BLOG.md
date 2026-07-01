@@ -1,6 +1,6 @@
 # Six agents, one box: I gave a whole AI team a single Toolbox and each saw two tools
 
-I modeled a software team as three AI agents — a lead, a researcher, and a builder — and pointed all of them at **one** governed Toolbox on Foundry. Six subtasks, six `tool_search` calls, one shared box of 24 tools, and every member's context stayed flat at two. The principle: **one box, one team, flat cost.**
+I modeled a software team as three AI agents — a lead, a researcher, and a builder — and pointed all of them at **one** governed Toolbox on Foundry. Six subtasks, six `tool_search` calls, one shared box of 48 tools, and every member's context stayed flat at two. The principle: **one box, one team, flat cost.**
 
 ## What it does
 
@@ -22,12 +22,12 @@ Each member only ever sees `tool_search` and `call_tool`. They issue different i
    [call_tool]   kb.search_docs({ "topic": "theming" })
 >_ [lead]       "cut a preview release"
    [call_tool]   releases.cut(...)  => [approval required] governed; lead approved -> v1.4.0-preview
-tools in the shared box: 24   ·   tools in each member's context: 2
+tools in the shared box: 48   ·   tools in each member's context: 2
 ```
 
 ## The numbers
 
-- Tools in the shared box: **24**
+- Tools in the shared box: **48**
 - Tools in each member's context: **2** (`tool_search` + `call_tool`)
 - Team members on one box: **3** (lead, researcher, builder)
 - `tool_search` round-trips: **6** (each member, its own subtasks)
@@ -36,7 +36,7 @@ tools in the shared box: 24   ·   tools in each member's context: 2
 
 ## The part people miss
 
-You don't wire tools into each agent. You curate **one** box and point the whole team at it. Add a tool to `tools.json` and every member can discover it through `tool_search` on the next run — no agent code changes, for any of them. Governance lives on the box, so a policy like "releases need approval" applies to the whole team at once.
+You don't wire tools into each agent. You curate **one** box and point the whole team at it. Add a 49th tool to `tools.json` and every member can discover it through `tool_search` on the next run — no agent code changes, for any of them. Governance lives on the box, so a policy like "releases need approval" applies to the whole team at once.
 
 ## Clone it
 

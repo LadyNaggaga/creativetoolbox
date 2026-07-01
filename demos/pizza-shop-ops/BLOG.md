@@ -1,6 +1,6 @@
-# I put 24 tools behind one endpoint and my pizza agent saw two
+# I put 18 tools behind one endpoint and my pizza agent saw two
 
-I gave a Friday-night pizza shop an AI line cook, stuffed 24 tools behind a single Toolbox endpoint on Foundry, and the agent ran the whole rush with exactly **two** tools in its context. The principle the demo is built around: **big box, tiny context.**
+I gave a Friday-night pizza shop an AI line cook, stuffed 18 tools behind a single Toolbox endpoint on Foundry, and the agent ran the whole rush with exactly **two** tools in its context. The principle the demo is built around: **big box, tiny context.**
 
 ## What it does
 
@@ -10,7 +10,7 @@ I gave a Friday-night pizza shop an AI line cook, stuffed 24 tools behind a sing
 
 ## The trick
 
-The toolbox has `{"type": "toolbox_search_preview"}` on, so the model only ever sees `tool_search` (say what you need) and `call_tool` (run it). Twenty-four stations behind the box, two tools in front of the model. This theme also leans into **approval gating**: `oven.set_temp` carries `require_approval: always`, so firing the deck oven pauses for a shift-lead sign-off before it runs.
+The toolbox has `{"type": "toolbox_search_preview"}` on, so the model only ever sees `tool_search` (say what you need) and `call_tool` (run it). Eighteen stations behind the box, two tools in front of the model. This theme also leans into **approval gating**: `oven.set_temp` carries `require_approval: always`, so firing the deck oven pauses for a shift-lead sign-off before it runs.
 
 ```
 >_ user: "fire up the deck oven for Neapolitan pies"
@@ -18,18 +18,18 @@ The toolbox has `{"type": "toolbox_search_preview"}` on, so the model only ever 
    [matched]     oven.set_temp, oven.read_temp, delivery.assign_driver, inventory.check_stock
    [call_tool]   oven.set_temp({ "temp": 475, "style": "Neapolitan" })
    => [approval required] oven.set_temp is gated. Shift-lead approved -> preheating to 475F.
-tools in box: 24   ·   tools in model context: 2
+tools in box: 18   ·   tools in model context: 2
 ```
 
 The matching is real: the emulator ranks the actual descriptions, and `oven.set_temp` wins over the near-miss `oven.read_temp` because its description and `additional_search_text` carry the colloquial "fire up / crank up / turn on the oven."
 
 ## The numbers
 
-- Tools in the box: **24**
+- Tools in the box: **18**
 - Tools in the model context: **2** (`tool_search` + `call_tool`)
 - `tool_search` round-trips: **5**
 - Guarded tools that paused for approval: **1** (`oven.set_temp`)
-- Lines of agent code that changed when I added a 25th tool: **0**
+- Lines of agent code that changed when I added a 19th tool: **0**
 
 ## The part people miss
 

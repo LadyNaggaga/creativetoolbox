@@ -26,7 +26,7 @@ make demo-dotnet     # C# (same team, same scenario, same output)
 
 You'll watch three team members route a "add dark mode" request through one shared box: the lead
 plans and assigns, the researcher digs up the theming pattern and design tokens, the builder opens a
-PR and runs CI, and the lead cuts a governed release. A counter shows the box has **24** tools while
+PR and runs CI, and the lead cuts a governed release. A counter shows the box has **48** tools while
 each member's context stays at **2**.
 
 ## What you just saw
@@ -34,7 +34,7 @@ each member's context stays at **2**.
 The toolbox has `{"type": "toolbox_search_preview"}` turned on, so it hides every real tool and gives
 each agent two meta-tools: `tool_search` (describe what you need) and `call_tool` (invoke it). Six
 different subtasks across three members, six `tool_search` calls — all against **one** box. Adding a
-25th tool costs every member nothing. **One box, one team, flat cost.**
+49th tool costs every member nothing. **One box, one team, flat cost.**
 
 The release step shows **governance**: `releases.cut` carries `require_approval: always`, so it pauses
 for a lead sign-off before it fires — the same curated, policy-bound box for the whole team.

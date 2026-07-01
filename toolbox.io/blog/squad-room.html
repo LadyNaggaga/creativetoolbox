@@ -31,7 +31,7 @@
     </span>
   </figcaption>
 </figure>
-<p>I modeled a software team as three AI agents — a lead, a researcher, and a builder — and pointed all of them at <strong>one</strong> governed Toolbox on Foundry. Six subtasks, six <code>tool_search</code> calls, one shared box of 24 tools, and every member's context stayed flat at two. The principle: <strong>one box, one team, flat cost.</strong></p>
+<p>I modeled a software team as three AI agents — a lead, a researcher, and a builder — and pointed all of them at <strong>one</strong> governed Toolbox on Foundry. Six subtasks, six <code>tool_search</code> calls, one shared box of 48 tools, and every member's context stayed flat at two. The principle: <strong>one box, one team, flat cost.</strong></p>
 <h2>What it does</h2>
 <p><code>squad-room</code> runs an "add dark mode" request through a team that shares a single Toolbox. The lead plans and assigns the work, the researcher digs up the existing theming pattern and design tokens, the builder opens a PR and runs CI, and the lead cuts a governed preview release. The team here is modeled on <a href="https://github.com/bradygaster/squad">bradygaster/squad</a> — but the whole point is that <em>any</em> agent or agent-team consumes the same endpoint the same way. It runs locally with <code>make demo</code> — no Azure, no squad install, no key.</p>
 <p><img src="../assets/gifs/squad-room.gif" alt="The Squad Room demo: three members share one governed Toolbox" style="max-width:100%;display:block;border:1px solid var(--cl-line)"></p>
@@ -46,11 +46,11 @@
    [call_tool]   kb.search_docs({ &quot;topic&quot;: &quot;theming&quot; })
 &gt;_ [lead]       &quot;cut a preview release&quot;
    [call_tool]   releases.cut(...)  =&gt; [approval required] governed; lead approved -&gt; v1.4.0-preview
-tools in the shared box: 24   ·   tools in each member's context: 2
+tools in the shared box: 48   ·   tools in each member's context: 2
 </code></pre>
 <h2>The numbers</h2>
 <ul>
-<li>Tools in the shared box: <strong>24</strong></li>
+<li>Tools in the shared box: <strong>48</strong></li>
 <li>Tools in each member's context: <strong>2</strong> (<code>tool_search</code> + <code>call_tool</code>)</li>
 <li>Team members on one box: <strong>3</strong> (lead, researcher, builder)</li>
 <li><code>tool_search</code> round-trips: <strong>6</strong> (each member, its own subtasks)</li>
@@ -61,7 +61,7 @@ tools in the shared box: 24   ·   tools in each member's context: 2
 <div class="tokchart">
   <div class="row"><span class="lbl">without</span><span class="bar" data-pct="100"></span><span class="num">15,840 tok</span></div>
   <div class="row"><span class="lbl">with</span><span class="bar" data-pct="15.9"></span><span class="num">2,520 tok</span></div>
-  <p class="basis">&minus;84% across 6 turns (per agent). Estimate: ~110 tokens per OpenAI-style tool schema (24 tools loaded every turn without Tool Search; just <code>tool_search</code> + <code>call_tool</code> with it), plus ~200 tokens per search round-trip. Multiply by 3 squad members for the team total.</p>
+  <p class="basis">&minus;84% across 6 turns (per agent). Estimate: ~110 tokens per OpenAI-style tool schema (48 tools loaded every turn without Tool Search; just <code>tool_search</code> + <code>call_tool</code> with it), plus ~200 tokens per search round-trip. Multiply by 3 squad members for the team total.</p>
 </div>
 <style>
  .tokchart{font-family:var(--cl-mono);font-size:.9rem;border:1px solid var(--cl-line);padding:.8rem 1rem;margin:.6rem 0;}

@@ -3,11 +3,11 @@
     {
       "slug": "mars-greenhouse-ops",
       "title": "Mars Greenhouse Ops",
-      "blurb": "Run a cheerful day in a Mars colony greenhouse while the agent finds the right console \u2014 24 tools, 2 in context.",
+      "blurb": "Run a cheerful day in a Mars colony greenhouse while the agent finds the right console \u2014 32 tools, 2 in context.",
       "repo": "",
       "blog": "blog/mars-greenhouse-ops.html",
       "lean": "pin + multi-server",
-      "boxSize": 24,
+      "boxSize": 32,
       "tokens": { "turns": 5, "pinned": 1 }
     },
     {
@@ -17,7 +17,7 @@
       "repo": "",
       "blog": "blog/pizza-shop-ops.html",
       "lean": "approval gating",
-      "boxSize": 24,
+      "boxSize": 18,
       "tokens": { "turns": 5, "pinned": 0 }
     },
     {
@@ -27,7 +27,7 @@
       "repo": "",
       "blog": "blog/squad-room.html",
       "lean": "squad-as-team + governance",
-      "boxSize": 24,
+      "boxSize": 48,
       "tokens": { "turns": 6, "pinned": 0 }
     }
   ],
