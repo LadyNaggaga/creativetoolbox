@@ -33,22 +33,34 @@
   ],
   "cloud": [
     {
-      "title": "Provisioned Toolbox",
-      "blurb": "The same flat-cost trick, but pointed at a real Toolbox you provision on Foundry \u2014 one hosted endpoint, real ranking.",
+      "slug": "mars-greenhouse-ops",
+      "title": "Mars Greenhouse Ops — Cloud",
+      "blurb": "The greenhouse agent deployed on Foundry \u2014 hero tools on Azure Container Apps, a real Toolbox, the model writes its own search live.",
+      "repo": "https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/mars-greenhouse-ops/cloud",
+      "blog": "blog/mars-greenhouse-ops-cloud.html",
+      "lean": "hosted agent + live trace",
+      "boxSize": 32,
+      "tokens": { "turns": 5, "pinned": 1 }
+    },
+    {
+      "slug": "pizza-shop-ops",
+      "title": "Pizza Shop Ops — Cloud",
+      "blurb": "The Friday rush on a real Foundry Toolbox \u2014 one hosted endpoint, real ranking, the oven still gates on approval server-side.",
+      "repo": "https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/pizza-shop-ops/cloud",
+      "blog": "blog/pizza-shop-ops-cloud.html",
       "lean": "real Foundry endpoint",
-      "status": "coming-soon"
+      "boxSize": 18,
+      "tokens": { "turns": 5, "pinned": 0 }
     },
     {
-      "title": "Hosted Team",
-      "blurb": "The Squad Room on a governed cloud Toolbox \u2014 approvals enforced server-side, shared by the whole team.",
+      "slug": "squad-room",
+      "title": "The Squad Room — Cloud",
+      "blurb": "A whole AI team on one deployed, governed Toolbox \u2014 three roles, three live searches, the release held for lead approval.",
+      "repo": "https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/squad-room/cloud",
+      "blog": "blog/squad-room-cloud.html",
       "lean": "cloud governance",
-      "status": "coming-soon"
-    },
-    {
-      "title": "Bring Your Own Agent",
-      "blurb": "Wire Agent Framework, Copilot, or a custom agent to a hosted Toolbox endpoint the same way.",
-      "lean": "BYO agent",
-      "status": "coming-soon"
+      "boxSize": 48,
+      "tokens": { "turns": 6, "pinned": 0 }
     }
   ],
   "share": [

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName": { "value": "pizza-shop-ops-a1d98u" },
+    "resourceGroupName": { "value": "rg-pizza-shop-ops-a1d98u" },
+    "location": { "value": "eastus2" },
+    "aiDeploymentsLocation": { "value": "eastus2" },
+    "deployerObjectId": { "value": "f20a505f-3dd6-4dd5-a9f2-834c97567d31" },
+    "deployerPrincipalType": { "value": "User" },
+    "aiProjectDeploymentsJson": {
+      "value": "[{\"name\":\"gpt-4o\",\"model\":{\"format\":\"OpenAI\",\"name\":\"gpt-4o\",\"version\":\"2024-11-20\"},\"sku\":{\"name\":\"GlobalStandard\",\"capacity\":30}}]"
+    },
+    "enableHostedAgents": { "value": true },
+    "enableCapabilityHost": { "value": false },
+    "enableMonitoring": { "value": true },
+    "useExistingAiProject": { "value": false }
+  }
+}

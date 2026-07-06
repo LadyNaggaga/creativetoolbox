@@ -1,0 +1,9 @@
+# Keep the ACR build context small (it's the whole demo folder for cloud/mcp-server/Dockerfile).
+**/__pycache__/
+**/*.pyc
+dotnet/
+python/
+assets/*.gif
+cloud/mcp-server/.venv/
+cloud/src/
+.git/

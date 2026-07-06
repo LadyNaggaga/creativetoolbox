@@ -1,0 +1,44 @@
+# toolbox.yaml — the Pizza Shop Ops box (Tool Search on).
+#
+# Create it once (after the MCP server is deployed and you've pasted its URL below):
+#   azd env set FOUNDRY_PROJECT_ENDPOINT "$(azd env get-value AZURE_AI_PROJECT_ENDPOINT)"
+#   azd ai toolbox create pizza-shop-ops --from-file ./cloud/toolbox.yaml
+# Then copy the versioned MCP endpoint it prints into TOOLBOX_ENDPOINT (see .env.example).
+description: Pizza Shop Ops — one endpoint, a big box of stations, flat context via Tool Search.
+tools:
+  # MUST be first: hides every tool from tools/list and gives the model tool_search + call_tool.
+  - type: toolbox_search_preview
+
+  # The themed hero-tools MCP server (Azure Container Apps). Public ingress, no auth for the demo.
+  # Replace <MCP_SERVER_URL> with the deploy.ps1 output, e.g.
+  #   https://pizzashop-mcp.<hash>.<region>.azurecontainerapps.io/mcp
+  - type: mcp
+    server_label: pizzashop
+    server_url: "https://pizzashop-mcp.greentree-c03ed75b.eastus.azurecontainerapps.io/mcp"
+    require_approval: "never"
+    tool_configs:
+      # The oven is the guarded action — pauses for a shift-lead sign-off before it fires.
+      oven_set_temp:
+        require_approval: "always"
+        additional_search_text: "oven temperature preheat fire up heat deck bake degrees neapolitan crank up turn on the oven"
+      inventory_check_stock:
+        additional_search_text: "stock count quantity remaining out of supply mozzarella cheese dough how much do we have low on"
+      orders_create:
+        additional_search_text: "new order place ring in fire ticket table large pepperoni get it in start an order"
+      kb_search_recipes:
+        additional_search_text: "recipe dough hydration proof bake time prep how to make ingredients formula neapolitan"
+      delivery_assign_driver:
+        additional_search_text: "delivery driver dispatch send out route assign deliver take the orders out"
+
+  # Hybrid pad: a built-in tool of a different type, so Tool Search has to disambiguate MCP vs web.
+  - type: web_search
+    name: web_search
+    require_approval: "never"
+
+  # Sandboxed Python (built-in, connectionless). Part of the box definition so the "one box" story is
+  # complete and so server-side Prompt agents can use it directly. NOTE: built-in tools declared here
+  # are NOT delivered through the toolbox's MCP endpoint, so a hosted agent using FoundryToolbox does
+  # not see code_interpreter via tool_search — for the hosted pizza agent it is ALSO attached natively
+  # in agent/src/pizza-shop-ops/main.py so it actually fires. Safe to leave ungated: isolated session.
+  - type: code_interpreter
+    name: code_interpreter

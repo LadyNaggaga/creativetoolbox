@@ -1,0 +1,38 @@
+# toolbox.yaml — the Mars Greenhouse Ops box (Tool Search on).
+#
+# Create it once (after the MCP server is deployed and you've pasted its URL below):
+#   azd env set FOUNDRY_PROJECT_ENDPOINT "$(azd env get-value AZURE_AI_PROJECT_ENDPOINT)"
+#   azd ai toolbox create mars-greenhouse-ops --from-file ./cloud/toolbox.yaml --project-endpoint <PE>
+# Then copy the versioned MCP endpoint it prints into TOOLBOX_ENDPOINT (see .env.example).
+description: Mars Greenhouse Ops — one endpoint, a big box of consoles, flat context via Tool Search.
+tools:
+  # MUST be first: hides every tool from tools/list and gives the model tool_search + call_tool.
+  - type: toolbox_search_preview
+
+  # The themed hero-tools MCP server (Azure Container Apps). Public ingress, no auth for the demo.
+  # Replace <MCP_SERVER_URL> with the deploy.ps1 output, e.g.
+  #   https://marsgreenhouse-mcp.<hash>.<region>.azurecontainerapps.io/mcp
+  - type: mcp
+    server_label: marsgreenhouse
+    server_url: "https://marsgreenhouse-mcp.delightfulbay-4218716c.eastus.azurecontainerapps.io/mcp"
+    require_approval: "never"
+    tool_configs:
+      # The dome air readout is the always-on console — pinned so it's visible without a search.
+      sensors_read_air:
+        pin: true
+        additional_search_text: "air quality co2 carbon dioxide oxygen humidity dome atmosphere greenhouse photosynthesis plants stuffy"
+      # Rebalancing power dims non-critical loads and can affect the crops — guarded action.
+      power_balance_load:
+        require_approval: "always"
+        additional_search_text: "electrical power budget battery solar grow lights load shed amps watts draw distribute energy panels dim"
+      irrigation_schedule:
+        additional_search_text: "water watering irrigation drip soak thirsty bed soil moisture schedule cycle hydrate plants tomatoes"
+      kb_search_guides:
+        additional_search_text: "guide how to grow planting care sow seed depth spacing germination tips manual handbook basil tomato lettuce"
+      notify_crew:
+        additional_search_text: "message crew colony team notify post board tell everyone share update announce gardener status note"
+
+  # Hybrid pad: a built-in tool of a different type, so Tool Search has to disambiguate MCP vs web.
+  - type: web_search
+    name: web_search
+    require_approval: "never"

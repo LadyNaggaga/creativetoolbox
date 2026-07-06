@@ -5,6 +5,14 @@
 # Python
 __pycache__/
 *.pyc
+.venv/
+**/.venv/
+
+# Secrets / local env (keep .env.example templates)
+.env
+**/.env
+!.env.example
+!**/.env.example
 
 # Emulator runtime
 **/.emu.pid
