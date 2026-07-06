@@ -1,0 +1,169 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I shipped the pizza agent to the cloud, and it wrote its own tool search — toolbox.io</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/favicon-180.png">
+<link rel="stylesheet" href="../assets/commandline.css">
+<style>
+ body.cl{max-width:820px;margin:0 auto;padding:2rem 1.25rem;font-size:15px;}
+ .cl h1{border-bottom:2px solid var(--cl-line);padding-bottom:.3rem;}
+ .cl pre{border:1px solid var(--cl-line);padding:12px 14px;overflow:auto;background:#cfcfcd;white-space:pre;}
+ .cl code{font-family:var(--cl-mono);}
+ .cl ul{padding-left:1.2rem;} .cl li{margin:.2rem 0;}
+ .cl table{border-collapse:collapse;margin:1rem 0;font-size:.9rem;}
+ .cl th,.cl td{border:1px solid var(--cl-line);padding:.35rem .6rem;text-align:left;}
+ .cl th{background:#cfcfcd;}
+ .nav{margin-bottom:1rem;} .nav a{color:var(--cl-ink);text-decoration:underline;}
+ .badge{display:inline-block;font-size:.72em;letter-spacing:.04em;border:1px solid var(--cl-line);padding:0 .4ch;text-transform:uppercase;margin-bottom:.6rem;}
+ .figure{border:1px solid var(--cl-line);margin:1rem 0;background:var(--cl-bg);}
+ .figure .slot,.figure svg{display:block;width:100%;height:auto;min-height:120px;}
+ .figure figcaption{display:flex;justify-content:space-between;gap:1rem;padding:.4rem .7rem;border-top:1px solid var(--cl-line);font-family:var(--cl-mono);font-size:.78rem;color:var(--cl-faint);}
+ .figure figcaption a,.figure figcaption button{font:inherit;color:var(--cl-ink);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;}
+</style></head><body class="cl">
+<p class="nav"><a href="../index.html">&larr; back to gallery</a></p>
+<span class="badge">cloud</span>
+<h1><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/pizza-shop-ops" style="color:inherit;text-decoration:none">I shipped the pizza agent to the cloud, and it wrote its own tool search</a></h1>
+<p class="nav"><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/pizza-shop-ops/cloud">view the cloud demo code on GitHub &rarr;</a></p>
+<figure class="figure" id="art-figure">
+  <div class="slot" aria-label="loading cloud art"></div>
+  <figcaption>
+    <span>// cloud art for pizza-shop-ops · monochrome · CC0</span>
+    <span>
+      <a href="../assets/art/pizza-shop-ops-cloud.svg" download>&#8595; svg</a>
+      &#183;
+      <button type="button" id="art-png">&#8595; png</button>
+    </span>
+  </figcaption>
+</figure>
+<p>The <a href="pizza-shop-ops.html">local demo</a> put 18 tools behind one endpoint and let the agent run the Friday rush with two tools in context. That version was an emulator on my laptop. This one is <strong>deployed</strong> — a real MCP server on Azure Container Apps, a real Foundry Toolbox with Tool Search, and a hosted agent running on Microsoft Foundry — and the search queries below are the ones the model <em>actually wrote</em>, pulled straight off the wire.</p>
+<p>Same principle: <strong>big box, tiny context.</strong> New part: it's live, and I can hand you the endpoint.</p>
+<h2>The shape of it</h2>
+<p>Three moving pieces, each a supported product surface, wired end to end:</p>
+<figure class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1320 400" width="1320" height="400" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace">
+<title>pizza-shop-ops — the shape of it</title>
+<desc>One endpoint, tiny context: inputs to a hosted Foundry agent, to a Toolbox with Tool Search, to an MCP server on Azure Container Apps. CC0.</desc>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1A1A1A"/></marker>
+</defs>
+<rect x="0" y="0" width="1320" height="400" fill="#D6D6D4"/>
+<text x="30" y="40" font-size="15" fill="#6B6B68">// the shape of it — big box, tiny context</text>
+<rect x="40" y="120" width="170" height="80" rx="4" fill="#cfcfcd" stroke="#1A1A1A" stroke-width="2"/>
+<text x="125" y="156" text-anchor="middle" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="700" font-size="19" fill="#1A1A1A">crew</text>
+<line x1="210" y1="160" x2="330" y2="160" stroke="#1A1A1A" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="270" y="88" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="13" fill="#1A1A1A">asks</text>
+<rect x="330" y="100.0" width="250" height="120" rx="4" fill="#cfcfcd" stroke="#1A1A1A" stroke-width="2"/>
+<text x="455" y="156" text-anchor="middle" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="700" font-size="19" fill="#1A1A1A">hosted agent</text>
+<text x="455" y="182" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="13" fill="#6B6B68">Foundry · gpt-4o</text>
+<rect x="680" y="100.0" width="300" height="120" rx="4" fill="#cfcfcd" stroke="#1A1A1A" stroke-width="2"/>
+<text x="830" y="156" text-anchor="middle" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="700" font-size="19" fill="#1A1A1A">Toolbox + Tool Search</text>
+<text x="830" y="182" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="13" fill="#6B6B68">Foundry · toolbox_search_preview</text>
+<rect x="1070" y="100.0" width="220" height="120" rx="4" fill="#cfcfcd" stroke="#1A1A1A" stroke-width="2"/>
+<text x="1180" y="156" text-anchor="middle" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="700" font-size="19" fill="#1A1A1A">MCP server</text>
+<text x="1180" y="182" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="13" fill="#6B6B68">Azure Container Apps</text>
+<line x1="580" y1="160" x2="680" y2="160" stroke="#1A1A1A" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="630" y="88" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="13" fill="#1A1A1A">tool_search</text>
+<line x1="980" y1="160" x2="1070" y2="160" stroke="#1A1A1A" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="1025" y="88" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="13" fill="#1A1A1A">call_tool</text>
+<line x1="1180" y1="220" x2="1180" y2="266" stroke="#6B6B68" stroke-width="1.6" stroke-dasharray="6 5"/>
+<line x1="1180" y1="266" x2="455" y2="266" stroke="#6B6B68" stroke-width="1.6" stroke-dasharray="6 5"/>
+<line x1="455" y1="266" x2="455" y2="220" stroke="#6B6B68" stroke-width="1.6" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
+<text x="818" y="258" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="13" fill="#6B6B68">tool result flows back — model never sees the full list</text>
+<text x="30" y="325" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" fill="#1A1A1A">in the box:</text>
+<rect x="168" y="302" width="66" height="30" rx="15" fill="none" stroke="#1A1A1A" stroke-width="1.6"/>
+<text x="201" y="323" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="14" fill="#1A1A1A">oven</text>
+<rect x="248" y="302" width="86" height="30" rx="15" fill="none" stroke="#1A1A1A" stroke-width="1.6"/>
+<text x="291" y="323" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="14" fill="#1A1A1A">orders</text>
+<rect x="348" y="302" width="116" height="30" rx="15" fill="none" stroke="#1A1A1A" stroke-width="1.6"/>
+<text x="406" y="323" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="14" fill="#1A1A1A">inventory</text>
+<rect x="478" y="302" width="46" height="30" rx="15" fill="none" stroke="#1A1A1A" stroke-width="1.6"/>
+<text x="501" y="323" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="14" fill="#1A1A1A">kb</text>
+<rect x="538" y="302" width="106" height="30" rx="15" fill="none" stroke="#1A1A1A" stroke-width="1.6"/>
+<text x="591" y="323" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="14" fill="#1A1A1A">delivery</text>
+<text x="664" y="323" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="15" fill="#6B6B68">…</text>
+<text x="30" y="384" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="14" fill="#6B6B68">many tools in the box · exactly 2 (tool_search + call_tool) in the model’s context</text>
+</svg><figcaption><span>// the shape of it — pizza-shop-ops · monochrome · CC0</span><span><a href="../assets/art/pizza-shop-ops-shape.svg" download>&#8595; svg</a></span></figcaption></figure>
+<ul>
+<li>The <strong>hero tools</strong> (<code>oven.set_temp</code>, <code>orders.create</code>, <code>inventory.check_stock</code>, <code>kb.search_recipes</code>, <code>delivery.assign_driver</code>, …) run as a FastMCP streamable-http server on <strong>Azure Container Apps</strong> — the exact same <code>hero_tools/</code> logic the local demo uses, just containerized and public.</li>
+<li>A <strong>Foundry Toolbox</strong> (<code>pizza-shop-ops</code>, v1) wraps that server behind one MCP endpoint with <code>{"type": "toolbox_search_preview"}</code> on, so the model sees only <code>tool_search</code> and <code>call_tool</code>.</li>
+<li>A <strong>hosted agent</strong> (the Agent Framework <code>04-foundry-toolbox</code> sample, customized for the Friday rush) connects to that one toolbox endpoint. I didn't write the MCP plumbing, the <code>Foundry-Features</code> header, the token dance, or the tool loop — the sample and the platform did.</li>
+</ul>
+<h2>The money shot: the model's own search query</h2>
+<p>I asked the <em>deployed</em> agent one plain question and read the trace back:</p>
+<pre><code>&gt;_ user: &quot;We're slammed on the Friday rush. What's the dough hydration and
+          bake time for a classic Neapolitan margherita?&quot;
+
+   [tool_search]  query: &quot;Neapolitan margherita dough hydration and bake time&quot;   ← the model wrote this
+   [matched]      pizzashop.kb_search_recipes, pizzashop.oven_set_temp, pizzashop.inventory_check_stock
+   [call_tool]    pizzashop.kb_search_recipes({ &quot;query&quot;: &quot;Neapolitan margherita dough hydration and bake time&quot; })
+   =&gt; &quot;00 flour, 62% hydration, 2.8% salt, 0.2% fresh yeast; bulk 2h then ball,
+       proof 6-8h at room temp. Bake 90s at 475F.&quot;
+
+   [assistant]    &quot;Dough hydration: 62%. Bake time: 90 seconds at 475°F.&quot;
+
+   tools in box: many   ·   tools in the model's context: 2
+</code></pre>
+<p>Nobody scripted that <code>tool_search</code> string. The model read the intent, described what it needed in its own words, and the toolbox ranked the real tool descriptions to surface <code>kb_search_recipes</code>. That's the whole pitch: you don't inline 18 schemas into the prompt and pray — the model <em>searches</em> the box.</p>
+<h2>The approval gate, live</h2>
+<p><code>oven.set_temp</code> carries <code>require_approval: always</code>. On the deployed agent:</p>
+<pre><code>&gt;_ user: &quot;Fire up the deck oven to 900F for Neapolitan pies — we're about to get slammed.&quot;
+
+   [tool_search]  query: &quot;set oven temperature&quot;
+   [matched]      pizzashop.oven_set_temp (guarded), pizzashop.oven_read_temp, ...
+   [assistant]    &quot;I'm setting the deck oven to 900°F for Neapolitan-style pies.
+                   Need shift-lead approval before firing it up — okay to proceed?&quot;
+</code></pre>
+<p>The guard fires. The agent discovers the right station, recognizes it's gated, and stops for a human instead of cranking the oven on its own say-so. Human-in-the-loop by design.</p>
+<h2>The model does the math — and draws the chart</h2>
+<p>The box holds the themed hero tools. But some Friday-night questions aren't a tool call — they're arithmetic and a picture. For those the agent has a <strong>sandboxed Python code interpreter</strong> attached directly, so it computes exact numbers and renders a chart instead of guessing in its head:</p>
+<pre><code>&gt;_ user: &quot;Tonight's pies: Margherita 40 @ $6.50, Pepperoni 55 @ $7.20,
+          Marinara 18 @ $5.10, Diavola 27 @ $8.00 profit each. Total per pie,
+          the grand total, a bar chart, and which one made the most money?&quot;
+
+   [code_interpreter]  runs Python, sums each line, plots a bar chart
+   [assistant]         &quot;Margherita $260.00, Pepperoni $396.00, Marinara $91.80,
+                        Diavola $216.00. Grand total $963.80. Most profitable:
+                        Pepperoni. [bar chart PNG]&quot;
+</code></pre>
+<p>That grand total is exact (not an LLM estimate), and the PNG is a real file the interpreter wrote in its sandbox. Live run on the deployed agent: <code>caresp_186424105aa480ba00yu5vtI6kUHjnbyINYeYi6QtmdSQX1mjm</code>.</p>
+<p><strong>One wrinkle worth writing down:</strong> a built-in tool like <code>code_interpreter</code> listed in <code>toolbox.yaml</code> is only surfaced to server-side <em>Prompt</em> agents — it does <strong>not</strong> come through the toolbox's MCP endpoint, so a <em>hosted</em> agent using <code>FoundryToolbox</code> never sees it via Tool Search. The fix is to attach it to the agent natively next to the box: <code>tools=[toolbox, {"type": "code_interpreter"}]</code>. Hero tools stay searchable in the box; the interpreter is a native agent capability.</p>
+<h2>It's deployed — here's the endpoint</h2>
+<p>This isn't a <code>make demo</code> emulator. It's a running agent you can hit:</p>
+<ul>
+<li><strong>Agent playground:</strong> open it in the <a href="https://ai.azure.com/nextgen/r/LThb9AdWSnaqlSi_ntO2JQ,rg-pizza-shop-ops-a1d98u,,ai-account-yhsqspyk7bsrw,ai-project-pizza-shop-ops-a1d98u/build/agents/pizza-shop-ops/build?version=1">Foundry portal</a> and chat with it.</li>
+<li><strong>Responses endpoint:</strong> <code>POST …/agents/pizza-shop-ops/endpoint/protocols/openai/responses</code></li>
+<li><strong>From your terminal:</strong></li>
+</ul>
+<pre><code class="language-bash">azd ai agent invoke pizza-shop-ops \
+  &quot;What's the dough hydration and bake time for a Neapolitan margherita?&quot;
+</code></pre>
+<p>Every call lands a trace in Application Insights (this run: <code>99d523678bec1da197aab90aa3cce593</code>), so the <code>tool_search</code> query, the <code>call_tool</code> pick, and the latency are all real, inspectable numbers — not screenshots.</p>
+<h2>How I built it (the honest version)</h2>
+<p>The happy path is <code>azd ai agent init</code> → <code>azd provision</code> → <code>azd deploy</code>. I hit two environment snags worth writing down, because you might too:</p>
+<ol>
+<li><strong><code>azd provision</code> wouldn't run</strong> — it kept trying to resolve my principal against a dead subscription in a tenant I'd lost access to, and hard-failed before touching the template. Fix: provision the Bicep directly with <code>az deployment sub create</code>, which uses a clean subscription list. The Foundry project, gpt-4o deployment, ACR, and App Insights all came up in one shot.</li>
+<li><strong><code>azd deploy</code> code path is region-gated</strong> — direct ZIP/code deploy is only supported in a few regions (not <code>eastus2</code>), and I had no local Docker. Fix: container deploy with <code>docker: remoteBuild: true</code> in <code>azure.yaml</code>, so azd builds the image on ACR instead of my machine. Deployed in <strong>2m28s</strong>.</li>
+</ol>
+<p>Neither is a Toolbox or agent problem — they're auth/region/tooling papercuts. The product path itself (toolbox create → agent connects → Tool Search ranks → guarded call pauses) worked exactly as designed, first try, both locally and deployed.</p>
+<h2>Honest cloud caveats</h2>
+<ul>
+<li><strong>Preview.</strong> Tool Search and hosted agents are in preview; endpoints and flags move.</li>
+<li><strong>One search round-trip per intent.</strong> You trade a flat, cheap context for a search hop. Worth it past ~5 tools; overkill below that.</li>
+<li><strong>Matching is only as good as the descriptions.</strong> <code>additional_search_text</code> (the colloquial "fire up / crank up the oven" padding) is doing real ranking work — without it, "set oven temperature" doesn't reliably beat "read oven temperature."</li>
+<li><strong>Cold start + container tier.</strong> The agent runs on a small container; first call after idle is slower.</li>
+<li><strong>The zero-Azure path still exists.</strong> If you don't want to spin up Azure, <code>make demo</code> runs the whole story locally against the emulator — same tools, same script, no cloud.</li>
+</ul>
+<h2>What carries forward</h2>
+<p>This is the template. <code>mars-greenhouse-ops</code> and <code>squad-room</code> reuse the exact same spine — hero tools on Container Apps, a Foundry Toolbox with Tool Search, a hosted agent that never sees the full list — so the next two demos are mostly theme and story, not new plumbing.</p>
+<script src="../assets/svg-figure.js"></script>
+<script>
+(async function () {
+  const f = window.toolboxFigure;
+  const artSvg = await f.inlineSVG('../assets/art/pizza-shop-ops-cloud.svg',
+                                   document.querySelector('#art-figure .slot'));
+  document.getElementById('art-png').addEventListener('click', () => {
+    f.downloadPNG(artSvg, 'pizza-shop-ops-cloud--art.png', 2);
+  });
+})();
+</script>
+</body></html>

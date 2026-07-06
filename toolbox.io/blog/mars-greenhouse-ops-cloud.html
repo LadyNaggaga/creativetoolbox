@@ -1,0 +1,156 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I shipped the greenhouse agent to Mars, and it wrote its own tool search — toolbox.io</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/favicon-180.png">
+<link rel="stylesheet" href="../assets/commandline.css">
+<style>
+ body.cl{max-width:820px;margin:0 auto;padding:2rem 1.25rem;font-size:15px;}
+ .cl h1{border-bottom:2px solid var(--cl-line);padding-bottom:.3rem;}
+ .cl pre{border:1px solid var(--cl-line);padding:12px 14px;overflow:auto;background:#cfcfcd;white-space:pre;}
+ .cl code{font-family:var(--cl-mono);}
+ .cl ul{padding-left:1.2rem;} .cl li{margin:.2rem 0;}
+ .cl table{border-collapse:collapse;margin:1rem 0;font-size:.9rem;}
+ .cl th,.cl td{border:1px solid var(--cl-line);padding:.35rem .6rem;text-align:left;}
+ .cl th{background:#cfcfcd;}
+ .nav{margin-bottom:1rem;} .nav a{color:var(--cl-ink);text-decoration:underline;}
+ .badge{display:inline-block;font-size:.72em;letter-spacing:.04em;border:1px solid var(--cl-line);padding:0 .4ch;text-transform:uppercase;margin-bottom:.6rem;}
+ .figure{border:1px solid var(--cl-line);margin:1rem 0;background:var(--cl-bg);}
+ .figure .slot,.figure svg{display:block;width:100%;height:auto;min-height:120px;}
+ .figure figcaption{display:flex;justify-content:space-between;gap:1rem;padding:.4rem .7rem;border-top:1px solid var(--cl-line);font-family:var(--cl-mono);font-size:.78rem;color:var(--cl-faint);}
+ .figure figcaption a,.figure figcaption button{font:inherit;color:var(--cl-ink);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;}
+</style></head><body class="cl">
+<p class="nav"><a href="../index.html">&larr; back to gallery</a></p>
+<span class="badge">cloud</span>
+<h1><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/mars-greenhouse-ops" style="color:inherit;text-decoration:none">I shipped the greenhouse agent to Mars, and it wrote its own tool search</a></h1>
+<p class="nav"><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/mars-greenhouse-ops/cloud">view the cloud demo code on GitHub &rarr;</a></p>
+<figure class="figure" id="art-figure">
+  <div class="slot" aria-label="loading cloud art"></div>
+  <figcaption>
+    <span>// cloud art for mars-greenhouse-ops · monochrome · CC0</span>
+    <span>
+      <a href="../assets/art/mars-greenhouse-ops-cloud.svg" download>&#8595; svg</a>
+      &#183;
+      <button type="button" id="art-png">&#8595; png</button>
+    </span>
+  </figcaption>
+</figure>
+<p>The <a href="mars-greenhouse-ops.html">local demo</a> put 32 dome consoles behind one endpoint and let the agent run a day in the greenhouse with two tools in context. That version was an emulator on my laptop. This one is <strong>deployed</strong> — a real MCP server on Azure Container Apps, a real Foundry Toolbox with Tool Search, and a hosted agent running on Microsoft Foundry — and the search query below is the one the model <em>actually wrote</em>, pulled straight off the wire.</p>
+<p>Same principle: <strong>big box, tiny context.</strong> New part: it's live, and I can hand you the endpoint.</p>
+<h2>The shape of it</h2>
+<p>Three moving pieces, each a supported product surface, wired end to end:</p>
+<figure class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1320 400" width="1320" height="400" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace">
+<title>mars-greenhouse-ops — the shape of it</title>
+<desc>One endpoint, tiny context: inputs to a hosted Foundry agent, to a Toolbox with Tool Search, to an MCP server on Azure Container Apps. CC0.</desc>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1A1A1A"/></marker>
+</defs>
+<rect x="0" y="0" width="1320" height="400" fill="#D6D6D4"/>
+<text x="30" y="40" font-size="15" fill="#6B6B68">// the shape of it — big box, tiny context</text>
+<rect x="40" y="120" width="170" height="80" rx="4" fill="#cfcfcd" stroke="#1A1A1A" stroke-width="2"/>
+<text x="125" y="156" text-anchor="middle" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="700" font-size="19" fill="#1A1A1A">crew</text>
+<line x1="210" y1="160" x2="330" y2="160" stroke="#1A1A1A" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="270" y="88" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="13" fill="#1A1A1A">asks</text>
+<rect x="330" y="100.0" width="250" height="120" rx="4" fill="#cfcfcd" stroke="#1A1A1A" stroke-width="2"/>
+<text x="455" y="156" text-anchor="middle" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="700" font-size="19" fill="#1A1A1A">hosted agent</text>
+<text x="455" y="182" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="13" fill="#6B6B68">Foundry · gpt-4o</text>
+<rect x="680" y="100.0" width="300" height="120" rx="4" fill="#cfcfcd" stroke="#1A1A1A" stroke-width="2"/>
+<text x="830" y="156" text-anchor="middle" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="700" font-size="19" fill="#1A1A1A">Toolbox + Tool Search</text>
+<text x="830" y="182" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="13" fill="#6B6B68">Foundry · toolbox_search_preview</text>
+<rect x="1070" y="100.0" width="220" height="120" rx="4" fill="#cfcfcd" stroke="#1A1A1A" stroke-width="2"/>
+<text x="1180" y="156" text-anchor="middle" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="700" font-size="19" fill="#1A1A1A">MCP server</text>
+<text x="1180" y="182" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="13" fill="#6B6B68">Azure Container Apps</text>
+<line x1="580" y1="160" x2="680" y2="160" stroke="#1A1A1A" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="630" y="88" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="13" fill="#1A1A1A">tool_search</text>
+<line x1="980" y1="160" x2="1070" y2="160" stroke="#1A1A1A" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="1025" y="88" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="13" fill="#1A1A1A">call_tool</text>
+<line x1="1180" y1="220" x2="1180" y2="266" stroke="#6B6B68" stroke-width="1.6" stroke-dasharray="6 5"/>
+<line x1="1180" y1="266" x2="455" y2="266" stroke="#6B6B68" stroke-width="1.6" stroke-dasharray="6 5"/>
+<line x1="455" y1="266" x2="455" y2="220" stroke="#6B6B68" stroke-width="1.6" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
+<text x="818" y="258" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="13" fill="#6B6B68">tool result flows back — model never sees the full list</text>
+<text x="30" y="325" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" fill="#1A1A1A">in the box:</text>
+<rect x="168" y="302" width="96" height="30" rx="15" fill="none" stroke="#1A1A1A" stroke-width="1.6"/>
+<text x="216" y="323" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="14" fill="#1A1A1A">sensors</text>
+<rect x="278" y="302" width="126" height="30" rx="15" fill="none" stroke="#1A1A1A" stroke-width="1.6"/>
+<text x="341" y="323" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="14" fill="#1A1A1A">irrigation</text>
+<rect x="418" y="302" width="76" height="30" rx="15" fill="none" stroke="#1A1A1A" stroke-width="1.6"/>
+<text x="456" y="323" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="14" fill="#1A1A1A">power</text>
+<rect x="508" y="302" width="86" height="30" rx="15" fill="none" stroke="#1A1A1A" stroke-width="1.6"/>
+<text x="551" y="323" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="14" fill="#1A1A1A">guides</text>
+<rect x="608" y="302" width="66" height="30" rx="15" fill="none" stroke="#1A1A1A" stroke-width="1.6"/>
+<text x="641" y="323" text-anchor="middle" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="14" fill="#1A1A1A">crew</text>
+<text x="694" y="323" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="15" fill="#6B6B68">…</text>
+<text x="30" y="384" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="14" fill="#6B6B68">many tools in the box · exactly 2 (tool_search + call_tool) in the model’s context</text>
+</svg><figcaption><span>// the shape of it — mars-greenhouse-ops · monochrome · CC0</span><span><a href="../assets/art/mars-greenhouse-ops-shape.svg" download>&#8595; svg</a></span></figcaption></figure>
+<ul>
+<li>The <strong>hero tools</strong> (<code>sensors.read_air</code>, <code>irrigation.schedule</code>, <code>power.balance_load</code>, <code>kb.search_guides</code>, <code>notify.crew</code>, …) run as a FastMCP streamable-http server on <strong>Azure Container Apps</strong> — the exact same <code>hero_tools/</code> logic the local demo uses, just containerized and public.</li>
+<li>A <strong>Foundry Toolbox</strong> (<code>mars-greenhouse-ops</code>, v1) wraps that server behind one MCP endpoint with <code>{"type": "toolbox_search_preview"}</code> on, so the model sees only <code>tool_search</code>, <code>call_tool</code>, and the one pinned air readout.</li>
+<li>A <strong>hosted agent</strong> (the Agent Framework <code>04-foundry-toolbox</code> sample, customized for the dome) connects to that one toolbox endpoint. I didn't write the MCP plumbing, the <code>Foundry-Features</code> header, the token dance, or the tool loop — the sample and the platform did.</li>
+</ul>
+<h2>The money shot: the model's own search query</h2>
+<p>I asked the <em>deployed</em> agent one plain question and read the trace back:</p>
+<pre><code>&gt;_ user: &quot;Prepping bed 3 for basil. How deep do I sow the seeds and what spacing?&quot;
+
+   [tool_search]  query: &quot;how deep to sow basil seeds and spacing recommendations&quot;   ← the model wrote this
+   [matched]      marsgreenhouse.kb_search_guides
+   [call_tool]    marsgreenhouse.kb_search_guides({ &quot;query&quot;: &quot;how deep to sow basil seeds and spacing recommendations&quot; })
+   =&gt; &quot;Sow basil 6 mm deep, 20 cm spacing. Germinates in 5-7 days at 21°C.
+       Pinch tips at 15 cm for bushier growth and a larger harvest.&quot;
+
+   [assistant]    &quot;Sow basil seeds 6 mm deep with 20 cm spacing. They germinate in
+                   5-7 days at 21°C. Pinch the tips when plants reach 15 cm.&quot;
+
+   tools in box: 32   ·   tools in the model's context: 2
+</code></pre>
+<p>Nobody scripted that <code>tool_search</code> string. The model read the intent, described what it needed in its own words, and the toolbox ranked the real tool descriptions to surface <code>kb_search_guides</code> out of 32 consoles. That's the whole pitch: you don't inline 32 schemas into the prompt and pray — the model <em>searches</em> the box.</p>
+<h2>The approval gate, live</h2>
+<p><code>power.balance_load</code> carries <code>require_approval: always</code> — rebalancing the dome can dim grow lights and touch the crops, so it's not something an agent should do on its own say-so. On the deployed agent:</p>
+<pre><code>&gt;_ user: &quot;The grow lights are drawing too much. Rebalance the dome power load
+          to shed non-critical draw.&quot;
+
+   [assistant]  &quot;Rebalancing the dome's power load to prioritize grow lights and shed
+                 non-critical draw requires notifying the crew lead for approval since
+                 it could impact other systems. … Let me know if I should proceed.&quot;
+</code></pre>
+<p>The guard fires. The agent recognizes the action is gated and stops for a human instead of shedding load on its own. Human-in-the-loop by design — the same spine as the pizza oven, different theme.</p>
+<h2>It's deployed — here's the endpoint</h2>
+<p>This isn't a <code>make demo</code> emulator. It's a running agent you can hit:</p>
+<ul>
+<li><strong>Agent playground:</strong> open it in the <a href="https://ai.azure.com/nextgen/r/LThb9AdWSnaqlSi_ntO2JQ,rg-mars-greenhouse-ops-o0n1ya,,ai-account-j47qdykunqcdo,ai-project-mars-greenhouse-ops-o0n1ya/build/agents/mars-greenhouse-ops/build?version=1">Foundry portal</a> and chat with it.</li>
+<li><strong>Responses endpoint:</strong> <code>POST …/agents/mars-greenhouse-ops/endpoint/protocols/openai/responses</code></li>
+<li><strong>From your terminal:</strong></li>
+</ul>
+<pre><code class="language-bash">azd ai agent invoke mars-greenhouse-ops \
+  &quot;Prepping bed 3 for basil. How deep do I sow the seeds and what spacing?&quot;
+</code></pre>
+<p>Every call lands a trace in Application Insights (this run: <code>caresp_4acc83a2eedc0bc70043qQBM4MhYs8fmAbqmrF9G2dV68j4QnM</code>), so the <code>tool_search</code> query, the <code>call_tool</code> pick, and the latency are all real, inspectable numbers — not screenshots.</p>
+<h2>How I built it (the honest version)</h2>
+<p>The happy path is <code>azd ai agent init</code> → <code>azd provision</code> → <code>azd deploy</code>. Same two environment snags as the pizza build, same two fixes — so this time they cost me minutes, not hours:</p>
+<ol>
+<li><strong><code>azd provision</code> wouldn't run</strong> — it kept trying to resolve my principal against a dead subscription in a tenant I'd lost access to, and hard-failed before touching the template. Fix: provision the Bicep directly with <code>az deployment sub create</code>, which uses a clean subscription list. The Foundry project, gpt-4o deployment, ACR, and App Insights all came up in one shot.</li>
+<li><strong><code>azd deploy</code> code path is region-gated</strong> — direct ZIP/code deploy is only supported in a few regions (not <code>eastus2</code>), and I had no local Docker. Fix: container deploy with <code>docker: remoteBuild: true</code> in <code>azure.yaml</code>, so azd builds the image on ACR instead of my machine. Deployed in <strong>2m40s</strong>.</li>
+</ol>
+<p>Neither is a Toolbox or agent problem — they're auth/region/tooling papercuts. The product path itself (toolbox create → agent connects → Tool Search ranks → guarded call pauses) worked exactly as designed.</p>
+<h2>Honest cloud caveats</h2>
+<ul>
+<li><strong>Preview.</strong> Tool Search and hosted agents are in preview; endpoints and flags move.</li>
+<li><strong>One search round-trip per intent.</strong> You trade a flat, cheap context for a search hop. Worth it past ~5 tools; overkill below that. At 32 consoles it's an easy call.</li>
+<li><strong>Matching is only as good as the descriptions.</strong> <code>additional_search_text</code> (the colloquial "how do I grow / how deep to sow" padding) is doing real ranking work — without it, "grow guide" doesn't reliably beat the sensor and irrigation tools.</li>
+<li><strong>Cold start + container tier.</strong> The agent runs on a small container; first call after idle is slower.</li>
+<li><strong>The zero-Azure path still exists.</strong> If you don't want to spin up Azure, <code>make demo</code> runs the whole story locally against the emulator — same tools, same script, no cloud.</li>
+</ul>
+<h2>What carries forward</h2>
+<p>This is the second demo on the exact same spine as <a href="pizza-shop-ops-cloud.html">pizza-shop-ops</a> — hero tools on Container Apps, a Foundry Toolbox with Tool Search, a hosted agent that never sees the full list. Two demos in, the plumbing is boilerplate; only the theme and the story change. <code>squad-room</code> is next, and it adds the enterprise governance layer (APIM + an API Center private MCP registry) on top of this same foundation.</p>
+<script src="../assets/svg-figure.js"></script>
+<script>
+(async function () {
+  const f = window.toolboxFigure;
+  const artSvg = await f.inlineSVG('../assets/art/mars-greenhouse-ops-cloud.svg',
+                                   document.querySelector('#art-figure .slot'));
+  document.getElementById('art-png').addEventListener('click', () => {
+    f.downloadPNG(artSvg, 'mars-greenhouse-ops-cloud--art.png', 2);
+  });
+})();
+</script>
+</body></html>

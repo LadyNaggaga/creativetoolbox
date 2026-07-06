@@ -1,0 +1,43 @@
+# toolbox.yaml — the Squad Room box (Tool Search on).
+#
+# ONE governed toolbox consumed by a whole agent TEAM (lead, researcher, builder). Every team member
+# sees the same two meta-tools; the box stays one flat-cost surface for the whole squad.
+#
+# Create it once (after the MCP server is deployed and you've pasted its URL below):
+#   azd env set FOUNDRY_PROJECT_ENDPOINT "$(azd env get-value AZURE_AI_PROJECT_ENDPOINT)"
+#   azd ai toolbox create squad-room --from-file ./cloud/toolbox.yaml --project-endpoint <PE>
+# Then copy the versioned MCP endpoint it prints into TOOLBOX_ENDPOINT (see .env.example).
+description: Squad Room — one governed endpoint, a big box of dev tools, flat context via Tool Search for a whole team.
+tools:
+  # MUST be first: hides every tool from tools/list and gives each agent tool_search + call_tool.
+  - type: toolbox_search_preview
+
+  # The themed hero-tools MCP server (Azure Container Apps). Public ingress, no auth for the demo.
+  # For the GOVERNED path, front this with API Management + register it in an Azure API Center private
+  # MCP registry, then point server_url at the governed gateway URL instead (see cloud/README.md).
+  # Replace https://squadroom-mcp.mangotree-a7104734.eastus.azurecontainerapps.io/mcp with the deploy.ps1 output, e.g.
+  #   https://squadroom-mcp.<hash>.<region>.azurecontainerapps.io/mcp
+  - type: mcp
+    server_label: squadroom
+    server_url: "https://squadroom-mcp.mangotree-a7104734.eastus.azurecontainerapps.io/mcp"
+    require_approval: "never"
+    tool_configs:
+      # Cutting a release is the governed action — dims nothing but ships to users, so it's gated.
+      releases_cut:
+        require_approval: "always"
+        additional_search_text: "ship release tag cut build publish deploy version preview rollout promote train launch"
+      kb_search_docs:
+        additional_search_text: "search docs codebase existing pattern how is this done find reference theme provider tokens research prior art"
+      repo_open_pr:
+        additional_search_text: "open pull request pr branch push code change diff submit review merge propose"
+      issues_assign:
+        additional_search_text: "assign issue ticket task owner give to hand off delegate work item backlog who does"
+      ci_run_tests:
+        additional_search_text: "run tests ci build check suite verify green red pipeline unit integration lint"
+      design_lookup_tokens:
+        additional_search_text: "design tokens colors palette spacing typography theme variables dark light figma brand"
+
+  # Hybrid pad: a built-in tool of a different type, so Tool Search has to disambiguate MCP vs web.
+  - type: web_search
+    name: web_search
+    require_approval: "never"

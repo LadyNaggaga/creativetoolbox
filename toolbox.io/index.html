@@ -70,7 +70,7 @@
     <h2>Demos</h2>
     <nav class="cl-tabs" id="tabs" role="tablist">
       <button data-track="local" role="tab" class="active">local</button>
-      <button data-track="cloud" role="tab">cloud <span class="soon">(soon)</span></button>
+      <button data-track="cloud" role="tab">cloud</button>
       <button data-track="share" role="tab">share <span class="soon">(soon)</span></button>
     </nav>
     <p class="cl-caption" id="trackNote"></p>
@@ -132,7 +132,7 @@
     // No build step. The gallery reads demos.json and renders cards per track.
     const NOTES = {
       local: 'Runs offline against a local mock emulator \u2014 no Azure, no key. Clone it and run make demo.',
-      cloud: 'Pointed at a real Toolbox you provision on Azure AI Foundry. Coming soon.',
+      cloud: 'Deployed on Azure AI Foundry \u2014 hero tools on Container Apps, a real Toolbox with Tool Search, a hosted agent. The model writes its own searches live.',
       share: 'Use one Toolbox across any agent \u2014 GitHub Copilot, Claw, Claude. Coming soon.'
     };
     const TRACKS = ['local', 'cloud', 'share'];
