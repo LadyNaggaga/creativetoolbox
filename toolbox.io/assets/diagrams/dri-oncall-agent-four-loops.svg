@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace">
+  <title>dri-oncall-agent — the four loops · toolbox.io</title>
+  <desc>Agent loop nested inside verification, triggered by events/routines, and improved by weekly human hill-climbing. CC0.</desc>
+
+  <style>
+    .ink   { stroke: #1a1a1a; fill: none; }
+    .box   { stroke: #1a1a1a; stroke-width: 2; fill: none; }
+    .smbox { stroke: #1a1a1a; stroke-width: 1.5; fill: none; }
+    .dash  { stroke: #1a1a1a; stroke-width: 1.5; fill: none; stroke-dasharray: 5 4; }
+    .lbl   { font-size: 14px; fill: #6b6b68; }
+    .hd    { font-size: 22px; font-weight: 700; fill: #1a1a1a; }
+    .smhd  { font-size: 15px; font-weight: 700; fill: #1a1a1a; }
+    .row   { font-size: 13px; fill: #1a1a1a; }
+    .rowf  { font-size: 12px; fill: #6b6b68; }
+    .fi    { fill: #1a1a1a; }
+    .ff    { fill: #6b6b68; }
+    .blink { animation: blink 1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* Inner agent-loop token (tight cycle) */
+    .tokA {
+      offset-path: path('M 490 340 L 610 340 L 610 420 L 490 420 Z');
+      animation: travel 3.2s linear infinite;
+    }
+    /* Event-loop token (trigger enters from the left, hits the agent) */
+    .tokE {
+      offset-path: path('M 120 260 L 340 260 L 340 380 L 460 380');
+      animation: travelIn 4.5s linear infinite;
+      animation-delay: 0.4s;
+    }
+    /* Action → audit ring (out to Toolbox, back to human) */
+    .tokH {
+      offset-path: path('M 700 500 L 900 500 L 900 260 L 700 260');
+      animation: travel 5.5s linear infinite;
+      animation-delay: 1.8s;
+    }
+    @keyframes travel {
+      0%   { offset-distance: 0%;   opacity: 0; }
+      8%   { opacity: 1; }
+      92%  { opacity: 1; }
+      100% { offset-distance: 100%; opacity: 0; }
+    }
+    @keyframes travelIn {
+      0%   { offset-distance: 0%;   opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 1; }
+      100% { offset-distance: 100%; opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .tokA, .tokE, .tokH, .blink { animation: none; }
+    }
+  </style>
+
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1a1a1a"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="720" fill="#d6d6d4"/>
+  <rect x="20" y="20" width="1160" height="680" class="box"/>
+
+  <g transform="translate(60,75)">
+    <text class="hd">&gt;_ the four loops · in one picture</text>
+    <text y="30" class="lbl">agent · verification · event/routine · hill-climbing — each anchored to a foundry primitive</text>
+  </g>
+
+  <!-- Outer: hill-climbing loop (weekly, human in the loop) -->
+  <rect x="60" y="130" width="1080" height="530" class="dash"/>
+  <text x="80" y="155" class="lbl">// loop 4 · hill-climbing (weekly review · routine history · overrides)</text>
+
+  <!-- Event trigger (left) -->
+  <g transform="translate(90,220)">
+    <rect width="240" height="90" class="smbox"/>
+    <text x="12" y="22" class="lbl">// loop 3 · event / routine</text>
+    <text x="12" y="46" class="smhd">trigger</text>
+    <text x="12" y="66" class="row">▸ IcM webhook · Teams event</text>
+    <text x="12" y="82" class="rowf">▸ foundry routine · timer</text>
+  </g>
+
+  <!-- DRI Agent box (center — contains agent loop + verification) -->
+  <g transform="translate(400,220)">
+    <rect width="400" height="320" class="box"/>
+    <text x="14" y="26" class="lbl">// foundry agent runtime · dri agent</text>
+    <text x="14" y="58" class="hd">agent</text>
+
+    <!-- Inner: agent loop -->
+    <g transform="translate(60,90)">
+      <rect width="280" height="110" class="smbox"/>
+      <text x="12" y="22" class="lbl">// loop 1 · agent loop</text>
+      <text x="12" y="46" class="smhd">reason → tool → observe</text>
+      <text x="12" y="70" class="row">▸ toolbox with tool search</text>
+      <text x="12" y="90" class="rowf">one tool at a time, by construction</text>
+    </g>
+
+    <!-- Inner: verification -->
+    <g transform="translate(60,220)">
+      <rect width="280" height="80" class="smbox"/>
+      <text x="12" y="22" class="lbl">// loop 2 · verification</text>
+      <text x="12" y="46" class="smhd">cite + validate</text>
+      <text x="12" y="66" class="rowf">▸ foundry iq kb · explicit citation contract</text>
+    </g>
+  </g>
+
+  <!-- Approval card (right) -->
+  <g transform="translate(870,220)">
+    <rect width="240" height="90" class="smbox"/>
+    <text x="12" y="22" class="lbl">// approval card in teams</text>
+    <text x="12" y="46" class="smhd">wait · human</text>
+    <text x="12" y="66" class="rowf">fresh token · action gated</text>
+  </g>
+
+  <!-- Toolbox action tool (bottom right) -->
+  <g transform="translate(870,420)">
+    <rect width="240" height="90" class="smbox"/>
+    <text x="12" y="22" class="lbl">// toolbox · action tool</text>
+    <text x="12" y="46" class="smhd">act</text>
+    <text x="12" y="66" class="rowf">audit → run history → hill-climb</text>
+  </g>
+
+  <!-- Human reviewer (bottom, feeds the outer loop) -->
+  <g transform="translate(90,560)">
+    <rect width="1020" height="60" class="smbox"/>
+    <text x="14" y="22" class="lbl">// weekly review · overrides · training signal</text>
+    <text x="14" y="46" class="smhd">human reviewer → tighten prompts, tools, policies, routines</text>
+  </g>
+
+  <!-- Arrows -->
+  <g class="ink" stroke-width="2">
+    <!-- event -> agent -->
+    <line x1="330" y1="265" x2="395" y2="330" marker-end="url(#arr)"/>
+    <!-- agent -> approval -->
+    <line x1="800" y1="265" x2="865" y2="265" marker-end="url(#arr)"/>
+    <!-- approval -> action -->
+    <line x1="990" y1="310" x2="990" y2="415" marker-end="url(#arr)"/>
+    <!-- action -> audit trail (down to reviewer) -->
+    <path d="M 990 510 L 990 560" marker-end="url(#arr)"/>
+    <!-- reviewer -> event (outer loop return) -->
+    <path d="M 90 590 L 60 590 L 60 265 L 85 265" marker-end="url(#arr)"/>
+  </g>
+
+  <!-- Traveling tokens -->
+  <g fill="#1a1a1a">
+    <circle r="5" class="tokA"/>
+    <circle r="5" class="tokE"/>
+    <circle r="5" class="tokH"/>
+  </g>
+
+  <!-- footer -->
+  <g transform="translate(60,690)">
+    <text class="fi" font-size="14" font-weight="700">toolbox.io<tspan class="blink fi"> _</tspan></text>
+    <text x="800" class="ff" font-size="11">four loops · dri-oncall-agent · CC0 · 1200×720</text>
+  </g>
+</svg>

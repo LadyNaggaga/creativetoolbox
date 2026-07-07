@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace">
+  <title>dri-oncall-agent — the hill-climbing loop · toolbox.io</title>
+  <desc>Weekly: traces + routine history + human corrections feed a ranked recommendation list; humans ship the good ones. CC0.</desc>
+  <style>
+    .ink{stroke:#1a1a1a;fill:none;} .box{stroke:#1a1a1a;stroke-width:2;fill:none;}
+    .smbox{stroke:#1a1a1a;stroke-width:1.5;fill:none;}
+    .dash{stroke:#1a1a1a;stroke-width:1.5;fill:none;stroke-dasharray:5 4;}
+    .lbl{font-size:14px;fill:#6b6b68;} .hd{font-size:22px;font-weight:700;fill:#1a1a1a;}
+    .smhd{font-size:15px;font-weight:700;fill:#1a1a1a;}
+    .row{font-size:13px;fill:#1a1a1a;} .rowf{font-size:12px;fill:#6b6b68;}
+    .fi{fill:#1a1a1a;} .ff{fill:#6b6b68;}
+    .blink{animation:blink 1s steps(1) infinite;} @keyframes blink{50%{opacity:0;}}
+
+    /* three inputs → analyzer (aim into clear channel between x=310 and x=470) */
+    .ti1{offset-path:path('M 310 220 L 470 340');animation:t 3.6s linear infinite;animation-delay:0s;}
+    .ti2{offset-path:path('M 310 340 L 470 360');animation:t 3.6s linear infinite;animation-delay:.6s;}
+    .ti3{offset-path:path('M 310 460 L 470 380');animation:t 3.6s linear infinite;animation-delay:1.2s;}
+    /* analyzer → recommendations */
+    .to1{offset-path:path('M 730 360 L 890 360');animation:t 3.2s linear infinite;animation-delay:1.6s;}
+    /* human review return: run in the empty margin (right side down, along the very bottom, up the very left) — no boxes there */
+    .th{offset-path:path('M 1090 550 L 1090 620 L 110 620 L 110 200');animation:t 6.5s linear infinite;animation-delay:2.4s;}
+    @keyframes t{0%{offset-distance:0%;opacity:0;}8%{opacity:1;}92%{opacity:1;}100%{offset-distance:100%;opacity:0;}}
+    @media (prefers-reduced-motion: reduce){.ti1,.ti2,.ti3,.to1,.th,.blink{animation:none;}}
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1a1a1a"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="700" fill="#d6d6d4"/>
+  <rect x="20" y="20" width="1160" height="660" class="box"/>
+
+  <g transform="translate(60,75)">
+    <text class="hd">&gt;_ loop 4 · the hill-climbing loop</text>
+    <text y="30" class="lbl">weekly · the same agent analyzes its own last 7 days · a human reviews · good ones ship</text>
+  </g>
+
+  <!-- LEFT: 3 inputs (x 130–310, y 180–500) -->
+  <text x="130" y="160" class="lbl">// inputs (captured with correlation)</text>
+  <g transform="translate(130,180)">
+    <rect width="180" height="80" class="smbox"/>
+    <text x="14" y="24" class="smhd">tool_call_trace</text>
+    <text x="14" y="44" class="rowf">input hash · digest</text>
+    <text x="14" y="60" class="rowf">duration · correlation id</text>
+  </g>
+  <g transform="translate(130,300)">
+    <rect width="180" height="80" class="smbox"/>
+    <text x="14" y="24" class="smhd">routine_run_history</text>
+    <text x="14" y="44" class="rowf">dispatch · response · status</text>
+    <text x="14" y="60" class="rowf">phase · error summary</text>
+  </g>
+  <g transform="translate(130,420)">
+    <rect width="180" height="80" class="smbox"/>
+    <text x="14" y="24" class="smhd">human corrections</text>
+    <text x="14" y="44" class="rowf">declined approvals · overrides</text>
+    <text x="14" y="60" class="rowf">edits · reactions</text>
+  </g>
+
+  <!-- CENTER: analyzer (x 470–730, y 300–420) -->
+  <g transform="translate(470,300)">
+    <rect width="260" height="130" class="box"/>
+    <text x="14" y="26" class="lbl">// foundry routine · Mon 09:00 PST</text>
+    <text x="14" y="58" class="hd">analyze</text>
+    <text x="14" y="86" class="row">▸ same agent · same guardrails</text>
+    <text x="14" y="106" class="row">▸ rank proposed changes</text>
+    <text x="14" y="126" class="rowf">weekly-learning-loop</text>
+  </g>
+
+  <!-- RIGHT: ranked recommendations (x 890–1090, y 220–500) -->
+  <g transform="translate(890,220)">
+    <rect width="200" height="280" class="smbox"/>
+    <text x="14" y="22" class="lbl">// ranked recommendations</text>
+    <text x="14" y="48" class="row">1. agent-instruction diff</text>
+    <text x="14" y="72" class="row">2. tool description / schema</text>
+    <text x="14" y="96" class="row">3. kb gap → runbook §…</text>
+    <text x="14" y="120" class="row">4. safety rubric addition</text>
+    <text x="14" y="144" class="row">5. retry / escalation tweak</text>
+    <text x="14" y="180" class="rowf">agent does NOT apply changes.</text>
+    <text x="14" y="196" class="rowf">a human reviews the list.</text>
+    <text x="14" y="228" class="smhd">good ones ship.</text>
+    <text x="14" y="248" class="smhd">bad ones don't.</text>
+  </g>
+
+  <!-- Arrows in clear channels -->
+  <g class="ink" stroke-width="2">
+    <line x1="310" y1="220" x2="465" y2="340" marker-end="url(#arr)"/>
+    <line x1="310" y1="340" x2="465" y2="360" marker-end="url(#arr)"/>
+    <line x1="310" y1="460" x2="465" y2="380" marker-end="url(#arr)"/>
+    <line x1="730" y1="360" x2="885" y2="360" marker-end="url(#arr)"/>
+  </g>
+
+  <!-- Human-review return arrow: runs in the OUTSIDE margins so it never crosses a box -->
+  <g class="ink" stroke-width="2" fill="none" stroke-dasharray="6 5">
+    <path d="M 1090 550 L 1090 620 L 110 620 L 110 200" marker-end="url(#arr)"/>
+  </g>
+  <text x="600" y="613" class="rowf" text-anchor="middle">↩ shipped changes flow back as next week's inputs (compounding · human-in-the-loop)</text>
+
+  <g fill="#1a1a1a">
+    <circle r="4" class="ti1"/><circle r="4" class="ti2"/><circle r="4" class="ti3"/>
+    <circle r="4" class="to1"/><circle r="4" class="th"/>
+  </g>
+
+  <g transform="translate(60,670)">
+    <text class="fi" font-size="14" font-weight="700">toolbox.io<tspan class="blink fi"> _</tspan></text>
+    <text x="800" class="ff" font-size="11">hill-climbing loop · dri-oncall-agent · CC0 · 1200×700</text>
+  </g>
+</svg>

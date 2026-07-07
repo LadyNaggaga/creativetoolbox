@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace">
+  <title>dri-oncall-agent — the agent loop · toolbox.io</title>
+  <desc>Reason step calls one tool via Toolbox with Tool Search, observes the result, loops back. CC0.</desc>
+
+  <style>
+    .ink   { stroke: #1a1a1a; fill: none; }
+    .box   { stroke: #1a1a1a; stroke-width: 2; fill: none; }
+    .smbox { stroke: #1a1a1a; stroke-width: 1.5; fill: none; }
+    .lbl   { font-size: 14px; fill: #6b6b68; }
+    .hd    { font-size: 22px; font-weight: 700; fill: #1a1a1a; }
+    .smhd  { font-size: 15px; font-weight: 700; fill: #1a1a1a; }
+    .row   { font-size: 13px; fill: #1a1a1a; }
+    .rowf  { font-size: 12px; fill: #6b6b68; }
+    .fi    { fill: #1a1a1a; }
+    .ff    { fill: #6b6b68; }
+    .blink { animation: blink 1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* Token traveling the reason → tool → observe → reason loop */
+    .tok {
+      offset-path: path('M 380 260 L 600 260 L 820 260 L 820 400 L 600 400 L 380 400 Z');
+      animation: travel 4.5s linear infinite;
+    }
+    @keyframes travel {
+      0%   { offset-distance: 0%;   opacity: 0; }
+      6%   { opacity: 1; }
+      94%  { opacity: 1; }
+      100% { offset-distance: 100%; opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .tok, .blink { animation: none; }
+    }
+  </style>
+
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1a1a1a"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="630" fill="#d6d6d4"/>
+  <rect x="20" y="20" width="1160" height="590" class="box"/>
+
+  <g transform="translate(60,75)">
+    <text class="hd">&gt;_ loop 1 · the agent loop</text>
+    <text y="30" class="lbl">reason → call one tool → observe → decide → repeat · one tool at a time, by construction</text>
+  </g>
+
+  <!-- Reason step (Foundry Agent Runtime) -->
+  <g transform="translate(140,220)">
+    <rect width="240" height="120" class="box"/>
+    <text x="14" y="26" class="lbl">// foundry agent runtime</text>
+    <text x="14" y="58" class="hd">reason</text>
+    <text x="14" y="82" class="row">▸ what changed?</text>
+    <text x="14" y="102" class="row">▸ what would I need?</text>
+  </g>
+
+  <!-- Toolbox -->
+  <g transform="translate(480,220)">
+    <rect width="240" height="120" class="box"/>
+    <text x="14" y="26" class="lbl">// toolbox with tool search</text>
+    <text x="14" y="58" class="hd">route</text>
+    <text x="14" y="82" class="row">▸ rank descriptions</text>
+    <text x="14" y="102" class="row">▸ pick one tool</text>
+  </g>
+
+  <!-- Observe -->
+  <g transform="translate(820,220)">
+    <rect width="240" height="120" class="box"/>
+    <text x="14" y="26" class="lbl">// call_tool result</text>
+    <text x="14" y="58" class="hd">observe</text>
+    <text x="14" y="82" class="row">▸ read the result</text>
+    <text x="14" y="102" class="row">▸ gate next decision</text>
+  </g>
+
+  <!-- Discipline note under the loop -->
+  <g transform="translate(280,380)">
+    <rect width="620" height="90" class="smbox"/>
+    <text x="14" y="26" class="lbl">// agent instructions</text>
+    <text x="14" y="52" class="smhd">reason → call ONE Toolbox tool → observe → decide next step</text>
+    <text x="14" y="74" class="rowf">"do not batch action tools." naive agents fail here — this one can't, by construction.</text>
+  </g>
+
+  <!-- Flow arrows -->
+  <g class="ink" stroke-width="2">
+    <line x1="380" y1="280" x2="475" y2="280" marker-end="url(#arr)"/>
+    <line x1="720" y1="280" x2="815" y2="280" marker-end="url(#arr)"/>
+    <!-- return path: observe (bottom) → down → left → up → reason -->
+    <path d="M 940 340 L 940 500 L 260 500 L 260 340" marker-end="url(#arr)"/>
+  </g>
+  <text x="600" y="530" class="rowf" text-anchor="middle">↩ back to reason step (one round-trip per tool)</text>
+
+  <!-- Traveling token -->
+  <g fill="#1a1a1a">
+    <circle r="5" class="tok"/>
+  </g>
+
+  <!-- footer -->
+  <g transform="translate(60,600)">
+    <text class="fi" font-size="14" font-weight="700">toolbox.io<tspan class="blink fi"> _</tspan></text>
+    <text x="800" class="ff" font-size="11">agent loop · dri-oncall-agent · CC0 · 1200×630</text>
+  </g>
+</svg>

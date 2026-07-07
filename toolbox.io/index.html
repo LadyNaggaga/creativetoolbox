@@ -72,6 +72,7 @@
       <button data-track="local" role="tab" class="active">local</button>
       <button data-track="cloud" role="tab">cloud</button>
       <button data-track="share" role="tab">share <span class="soon">(soon)</span></button>
+      <button data-track="trends" role="tab">agentic trends</button>
     </nav>
     <p class="cl-caption" id="trackNote"></p>
     <div class="cl-grid" id="grid"><!-- cards injected from demos.json --></div>
@@ -133,10 +134,11 @@
     const NOTES = {
       local: 'Runs offline against a local mock emulator \u2014 no Azure, no key. Clone it and run make demo.',
       cloud: 'Deployed on Azure AI Foundry \u2014 hero tools on Container Apps, a real Toolbox with Tool Search, a hosted agent. The model writes its own searches live.',
-      share: 'Use one Toolbox across any agent \u2014 GitHub Copilot, Claw, Claude. Coming soon.'
+      share: 'Use one Toolbox across any agent \u2014 GitHub Copilot, Claw, Claude. Coming soon.',
+      trends: 'What we\'re watching next in agentic systems \u2014 loops, governance, and where the Toolbox pattern is heading.'
     };
-    const TRACKS = ['local', 'cloud', 'share'];
-    let DATA = { local: [], cloud: [], share: [] };
+    const TRACKS = ['local', 'cloud', 'share', 'trends'];
+    let DATA = { local: [], cloud: [], share: [], trends: [] };
 
     // Counter roll-up animation
     function animateCounter(target, endValue) {
@@ -186,16 +188,17 @@
       });
     }
 
-    fetch('demos.json')
+    fetch('demos.json?v=' + Date.now())
       .then(r => r.json())
       .then(demos => {
         // Support both the new {local, cloud, share} shape and a legacy flat array.
-        DATA = Array.isArray(demos) ? { local: demos, cloud: [], share: [] } : {
+        DATA = Array.isArray(demos) ? { local: demos, cloud: [], share: [], trends: [] } : {
           local: demos.local || [],
           cloud: demos.cloud || [],
-          share: demos.share || []
+          share: demos.share || [],
+          trends: demos.trends || []
         };
-        const maxBox = [...DATA.local, ...DATA.cloud, ...DATA.share]
+        const maxBox = [...DATA.local, ...DATA.cloud, ...DATA.share, ...DATA.trends]
           .reduce((m, d) => d.boxSize ? Math.max(m, d.boxSize) : m, 0);
         if (maxBox) {
           animateCounter(document.getElementById('boxN'), maxBox);

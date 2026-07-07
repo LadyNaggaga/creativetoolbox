@@ -1,0 +1,20 @@
+# Foundry routine (preview) — 30-minute incident follow-up
+# One-shot timer scheduled by the agent when an incident is created.
+name: incident-follow-up-30m
+description: >
+  30-minute check on an active incident: verify owner acknowledgment, mitigation
+  progress, and status-update cadence. Post a nudge if any gate is missed.
+trigger:
+  type: timer
+  # `at` is populated at creation time by the agent using the incident's createdAt + PT30M.
+  at: "{{ incident.createdAt | dateAdd('PT30M') }}"
+  timeZone: "UTC"
+action:
+  type: invoke_agent
+  agentName: dri-agent-payments
+  inputPrompt: |
+    Follow up on incident {{ incident.id }}.
+    Verify: owner acknowledged? mitigation in progress? status update in last 15 minutes?
+    If any is 'no', post a concise nudge in the existing incident thread. Never DM.
+    Cite telemetry and incident-system sources. Do not take action.
+enabled: true

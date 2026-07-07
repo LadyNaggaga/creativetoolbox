@@ -1,0 +1,25 @@
+# Foundry routine (preview) — weekly hill-climbing loop
+name: weekly-learning-loop
+description: >
+  Weekly analysis of traces, incident history, failed hypotheses, and human
+  corrections. Produces recommended improvements to prompts, tool descriptions,
+  KB content, and safety rubrics. Does not apply changes.
+trigger:
+  type: schedule
+  cronExpression: "0 9 * * MON"
+  timeZone: "America/Los_Angeles"
+action:
+  type: invoke_agent
+  agentName: dri-agent-payments
+  inputPrompt: |
+    Analyze the last 7 days for the payments DRI agent.
+    Inputs: tool-call traces, learning_signal blocks from incidents, routine run
+    history from inspect_routine_runs, human overrides, declined approvals.
+    Output recommendations by category:
+      - Agent instructions changes (with proposed diff),
+      - Toolbox tool description or schema changes,
+      - Foundry IQ KB gaps (missing runbook sections, stale docs),
+      - Safety rubric additions,
+      - Retry / escalation policy tweaks.
+    Rank by expected impact. Do not modify anything.
+enabled: true

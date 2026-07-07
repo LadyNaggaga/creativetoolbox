@@ -1,0 +1,3 @@
+{"deployId":"dep-20260705-payments-api-2142","service":"payments-api","version":"v2.14.2","sha":"7f2d10","prNumber":8809,"at":"2026-07-05T21:14:00Z","by":"rmehta","status":"succeeded"}
+{"deployId":"dep-20260706-payments-api-2143","service":"payments-api","version":"v2.14.3","sha":"a91b4c","prNumber":8821,"at":"2026-07-06T13:47:00Z","by":"alicez","status":"succeeded","risk":"medium","notes":"Refactor idempotency-key cache TTL"}
+{"deployId":"dep-20260706-payments-ledger-0908","service":"payments-ledger","version":"v1.9.8","sha":"c40ee2","prNumber":4412,"at":"2026-07-06T09:08:00Z","by":"priyan","status":"succeeded","risk":"low"}

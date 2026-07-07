@@ -1,0 +1,272 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Understanding the Agent Loop with Foundry — a DRI Agent, Step by Step — toolbox.io</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/favicon-180.png">
+<link rel="stylesheet" href="../assets/commandline.css">
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<style>
+ body.cl{max-width:820px;margin:0 auto;padding:2rem 1.25rem;font-size:15px;}
+ .cl h1{border-bottom:2px solid var(--cl-line);padding-bottom:.3rem;}
+ .cl pre{border:1px solid var(--cl-line);padding:12px 14px;overflow:auto;background:#cfcfcd;white-space:pre;}
+ .cl code{font-family:var(--cl-mono);}
+ .cl ul{padding-left:1.2rem;} .cl li{margin:.2rem 0;}
+ .cl table{border-collapse:collapse;margin:1rem 0;font-size:.9rem;}
+ .cl th,.cl td{border:1px solid var(--cl-line);padding:.35rem .6rem;text-align:left;}
+ .cl th{background:#cfcfcd;}
+ .cl blockquote{border-left:3px solid var(--cl-line);margin:1rem 0;padding:.2rem .8rem;color:var(--cl-faint);}
+ .nav{margin-bottom:1rem;} .nav a{color:var(--cl-ink);text-decoration:underline;}
+ .badge{display:inline-block;font-size:.72em;letter-spacing:.04em;border:1px solid var(--cl-line);padding:0 .4ch;text-transform:uppercase;margin-bottom:.6rem;}
+ .figure{border:1px solid var(--cl-line);margin:1rem 0;background:var(--cl-bg);}
+ .figure .slot,.figure svg{display:block;width:100%;height:auto;}
+ .figure figcaption{display:flex;justify-content:space-between;gap:1rem;padding:.4rem .7rem;border-top:1px solid var(--cl-line);font-family:var(--cl-mono);font-size:.78rem;color:var(--cl-faint);}
+ .figure figcaption a,.figure figcaption button{font:inherit;color:var(--cl-ink);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;}
+ /* anime.js reveal — hidden until JS enables (or reduced-motion falls back) */
+ .cl h2,.cl h3,.cl .figure{opacity:0;transform:translateY(8px);}
+ .reveal-ready .cl h2,.reveal-ready .cl h3,.reveal-ready .cl .figure{opacity:1;transform:none;}
+ @media (prefers-reduced-motion: reduce){
+   .cl h2,.cl h3,.cl .figure{opacity:1;transform:none;}
+ }
+</style></head><body class="cl">
+<p class="nav"><a href="../index.html#trends">&larr; back to gallery</a></p>
+<span class="badge">agent loop</span>
+<h1><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/dri-oncall-agent" style="color:inherit;text-decoration:none">Understanding the Agent Loop with Foundry — a DRI Agent, Step by Step</a></h1>
+<p class="nav"><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/dri-oncall-agent">view the demo on GitHub &rarr;</a></p>
+
+<figure class="figure" id="art-figure">
+  <div class="slot" aria-label="loading art"></div>
+  <figcaption>
+    <span>// art for dri-oncall-agent · four rings, one agent · monochrome · CC0</span>
+    <span>
+      <a href="../assets/art/dri-oncall-agent.svg" download>&#8595; svg</a>
+      &middot;
+      <button type="button" id="art-png">&#8595; png</button>
+    </span>
+  </figcaption>
+</figure>
+<p><em>How Toolbox with Tool Search on Foundry, Foundry IQ, and Foundry routines turn "a model that calls tools" into a </em><em>governed enterprise coworker</em><em> — traced through a real Friday-afternoon incident.</em></p>
+<hr />
+<h2>Why "the agent loop" is the whole story</h2>
+<p>Everyone can wire a language model to a couple of tools. The interesting question isn't <em>"can it call a tool?"</em> — it's:</p>
+<ul>
+<li>Does it <strong>know when to stop investigating and propose</strong>?</li>
+<li>Does it <strong>verify</strong> its own hypothesis before recommending a rollback?</li>
+<li>Does it wait for a <strong>human approval</strong> before touching production?</li>
+<li>Can you <strong>inspect</strong> what it did, later, in a way that satisfies audit?</li>
+<li>Does it get <strong>better next week</strong> without a human re-writing its prompt?</li>
+</ul>
+<p>Those questions aren't answered by "the model." They're answered by <strong>the loop around the model</strong>. That harness — reason, act, verify, wait, learn — is what we call the <strong>agent loop</strong>, and on <strong>Toolbox with Tool Search on Foundry</strong> it's not a diagram, it's a set of concrete surfaces you can build against.</p>
+<p>This post walks the loop through one real incident and shows exactly which Foundry primitive does what.</p>
+<p>The scenario, the tools, the routines, and the fixtures used in this walkthrough all live in <a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/dri-oncall-agent/README.md"><code>demos/dri-oncall-agent/</code></a>.</p>
+<hr />
+<h2>The scenario</h2>
+<p><strong>Friday, 14:07 UTC.</strong> An IcM alert fires: <code>payments-api</code> is throwing 5xx errors at 18% in <code>westus2</code>. The alert lands in <code>#payments-oncall</code>. It's a Teams channel with about 40 people in it. Nobody has responded yet.</p>
+<p>Then this appears in the thread, three seconds later:</p>
+<blockquote>
+<p><strong>DRI Agent</strong> — Investigating <strong>IcM-4471293</strong> (payments-api, westus2, 5xx 18%). Read-only tools only until approval. Correlating with recent changes now.</p>
+</blockquote>
+<p>Nobody tagged the agent. Nobody typed a prompt. And by the time an on-call engineer has finished re-reading the alert, the agent has already correlated the spike with a deploy from 20 minutes ago, matched a runbook, identified a suspect PR, resolved the owner, and posted a mitigation proposal — with citations — waiting for a human to click <strong>Approve</strong>.</p>
+<p>That's four loops running at once. Let's take them one at a time.</p>
+<hr />
+<h2>Loop 1 — the agent loop</h2>
+<p><strong>Reason → call one tool → observe → decide → repeat.</strong></p>
+<p>This is the innermost loop, and it's the one people usually mean when they say "agent." On Foundry Agent Runtime it looks like this:</p>
+<figure class="figure" id="loop-figure"><div class="slot" aria-label="loading diagram"></div><figcaption><span>// loop 1 · the agent loop · dri-oncall-agent</span><span><a href="../assets/diagrams/dri-oncall-agent-loop.svg" download>&#8595; svg</a> &middot; <button type="button" id="loop-png">&#8595; png</button></span></figcaption></figure>
+<p>The critical Foundry piece here isn't the model — it's <strong>Tool Search on Toolbox</strong>. The agent doesn't need to be handed a hard-coded list of ten tool names. It expresses intent ("I need to check recent deployments for payments-api in the last 30 minutes"), and Toolbox routes to the right tool with the right shape.</p>
+<p>For our incident, the agent's inner monologue reads like this (heavily paraphrased):</p>
+<ol>
+<li><em>"I have an IcM alert. First thing I should know: what changed recently?"</em>  → calls <code>inspect_recent_changes(serviceName="payments-api", timeRange="PT30M")</code>. Gets back deploy <code>v2.14.3</code> at 13:47 UTC, merged from PR #8821.</li>
+<li><em>"Deploy correlates in time. But correlation isn't cause. Let me see if the runbook has a known pattern for 5xx-after-deploy."</em> → <code>search_foundry_iq_kb(query="payments-api 5xx after deploy", filters={source: ["runbook"]})</code>. Gets a hit: "Common causes / 1 — Idempotency-key cache misconfiguration."</li>
+<li><em>"The suspect PR touched idempotency cache TTL. That's a direct match."</em> → <code>search_foundry_iq_kb</code> again for retros. Finds <code>retro-2025-11-18 — idempotency TTL regression</code>.</li>
+<li><em>"I have a plausible cause with a corroborated runbook and a matching prior retro. Who owns this?"</em> → <code>find_service_owner(serviceName="payments-api")</code>. Gets @alicez.</li>
+<li><em>"Enough to propose. Draft the mitigation."</em> → <code>draft_mitigation(...)</code>.</li>
+</ol>
+<p>Notice the discipline: <strong>one tool at a time</strong>, each observation gates the next decision. That discipline lives in the agent instructions (<a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/dri-oncall-agent/agent-instructions.md"><code>agent-instructions.md</code></a>):</p>
+<blockquote>
+<p>Reason → call <strong>one</strong> Toolbox tool → observe → decide next step. Do not batch action tools.</p>
+</blockquote>
+<p>Batching action tools is where naive agents get themselves into trouble. This one can't, by construction.</p>
+<hr />
+<h2>Loop 2 — the verification loop</h2>
+<figure class="figure" id="verification-figure"><div class="slot" aria-label="loading diagram"></div><figcaption><span>// loop 2 · the verification loop · dri-oncall-agent</span><span><a href="../assets/diagrams/dri-oncall-agent-verification.svg" download>&#8595; svg</a> &middot; <button type="button" id="verification-png">&#8595; png</button></span></figcaption></figure>
+<p><strong>Every non-trivial claim must be cited. Every action must be validated after the fact.</strong></p>
+<p>This is what turns an "agent that answers" into an "agent you can trust in production." It sits <em>inside</em> the agent loop but has its own contract:</p>
+<ul>
+<li>No claim without a citation object <code>{source, title, url, updatedAt, confidence}</code>.</li>
+<li>Telemetry claims must include the <strong>exact query text</strong>.</li>
+<li>Confidence &lt; 0.6 or conflicting sources → escalate, don't act.</li>
+<li>Every action tool must be followed by a <strong>validation</strong> step: re-run the diagnostic query, confirm recovery.</li>
+</ul>
+<p>In our incident, this is why the mitigation card doesn't just say "roll back v2.14.3." It says:</p>
+<ul>
+<li><strong>Action:</strong> rollback <code>payments-api</code> from <code>v2.14.3</code> → <code>v2.14.2</code> in <code>westus2</code>.</li>
+<li><strong>Blast radius:</strong> 1 service, 1 region, ~10k RPS.</li>
+<li><strong>Sources:</strong> runbook §Mitigation/1, deploys.jsonl <code>dep-20260706-payments-api-2143</code>, PR #8821.</li>
+<li><strong>Validation KQL</strong> (verbatim from runbook): re-run 2 minutes after execution.</li>
+<li><strong>Buttons:</strong> <code>Approve</code> / <code>Decline</code>.</li>
+</ul>
+<p>And it's why, two minutes after the rollback, the agent posts a follow-up:</p>
+<blockquote>
+<p>Recovery verified. 5xx rate is 0.4% and falling. <em>(query text visible)</em></p>
+</blockquote>
+<p>The verification loop is what closes the gap between "the model believes this worked" and "we can prove it worked."</p>
+<p><strong>The Foundry primitive doing the heavy lifting here is Foundry IQ Knowledge Base.</strong> Every citation the agent produces traces back to a chunk with a stable URL, a section anchor, and an <code>updatedAt</code> timestamp. If the runbook changes tomorrow, the agent's next incident cites the new version — and the old citation still resolves to the version the agent read.</p>
+<hr />
+<h2>Loop 3 — the event and routine loop</h2>
+<figure class="figure" id="events-figure"><div class="slot" aria-label="loading diagram"></div><figcaption><span>// loop 3 · the event and routine loop · dri-oncall-agent</span><span><a href="../assets/diagrams/dri-oncall-agent-events.svg" download>&#8595; svg</a> &middot; <button type="button" id="events-png">&#8595; png</button></span></figcaption></figure>
+<p><strong>The agent doesn't wait to be talked to.</strong></p>
+<p>This is where Foundry-native surfaces make the difference between "an agent" and "an agent that behaves like a coworker on rotation." Two mechanisms:</p>
+<p><strong>Real-time triggers.</strong> Teams events, IcM webhooks, ADO/GitHub events, telemetry alerts. Our IcM alert doesn't go into a queue that the agent polls — it fires the agent directly. Three-second time-to-first-message isn't a benchmark, it's a consequence of not polling.</p>
+<p><strong>Foundry routines (preview).</strong> For things that happen on a schedule or at a specific future time. In our demo we deploy four:</p>
+<table>
+<thead>
+<tr>
+<th>Routine</th>
+<th>Trigger</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>weekday-readiness-scan</code></td>
+<td>schedule, 08:00 PST weekdays</td>
+<td>Post open incidents, risky deploys, stale alerts, unresolved action items.</td>
+</tr>
+<tr>
+<td><code>incident-follow-up-30m</code></td>
+<td>timer, +30m from incident create</td>
+<td>Verify owner ack, mitigation progress, status-update cadence. Nudge if any is missed.</td>
+</tr>
+<tr>
+<td><code>postmortem-draft-24h</code></td>
+<td>timer, +24h from resolve</td>
+<td>Draft a postmortem for human review. Never publishes.</td>
+</tr>
+<tr>
+<td><code>weekly-learning-loop</code></td>
+<td>schedule, Monday 09:00 PST</td>
+<td>Analyze last 7 days and recommend improvements.</td>
+</tr>
+</tbody>
+</table>
+<p>Here's what makes routines interesting for the loop story: <strong>they're not just cron.</strong> Each routine's action is <em>"invoke this agent with this prompt,"</em> which means the routine inherits every guardrail the agent already has — instructions, tool policy, approval gates, citation contract, audit trail. You don't have to re-implement safety for the scheduler.</p>
+<p>A concrete example: when the incident is resolved, our agent doesn't email the team a postmortem template. It calls <code>schedule_foundry_routine</code> (an action tool, so it requires approval) to create a <strong>one-shot timer</strong> 24 hours out. When the timer fires, the same agent, with the same instructions, produces a <em>draft</em> postmortem in-thread and marks it clearly as a draft. If the team doesn't like it, the fix goes into the agent's instructions or the KB, and next week's postmortem inherits the fix.</p>
+<p>A caveat worth stating out loud, because it appears in the routine YAMLs too: routines are <strong>preview</strong>, minimum interval is 5 minutes, each routine has one action, and routine-bound agents require <strong>configured agent identity</strong> (a prompt-only agent won't work). Confirm regional availability in your Foundry project before deploying.</p>
+<p>Peek at <a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/dri-oncall-agent/routines/incident-follow-up-30m.yaml"><code>routines/incident-follow-up-30m.yaml</code></a> if you want to see how tight the manifest is — 30 lines of YAML for a fully governed, agent-invoking, timer-triggered follow-up.</p>
+<hr />
+<h2>Loop 4 — the hill-climbing loop</h2>
+<figure class="figure" id="hillclimbing-figure"><div class="slot" aria-label="loading diagram"></div><figcaption><span>// loop 4 · the hill-climbing loop · dri-oncall-agent</span><span><a href="../assets/diagrams/dri-oncall-agent-hillclimbing.svg" download>&#8595; svg</a> &middot; <button type="button" id="hillclimbing-png">&#8595; png</button></span></figcaption></figure>
+<p><strong>The agent gets better every week without you re-writing its prompt.</strong></p>
+<p>The other three loops are inside a single incident. This one lives <em>between</em> incidents. It's the loop that most demos skip and most production deployments miss.</p>
+<p>Three inputs feed it:</p>
+<ol>
+<li><strong>Tool-call traces.</strong> Every call has an input hash, an output digest, a duration, a correlation ID. The agent emits a <code>tool_call_trace</code> block at the end of every incident reply.</li>
+<li><strong>Routine run history.</strong> <code>inspect_routine_runs</code> returns dispatch ID, response ID, status, phase, error summary for every routine dispatch. That's the accountability surface — for humans, for audit, and for the agent's own weekly analysis.</li>
+<li><strong>Human corrections.</strong> Declined approvals. Manual overrides. Edits to the postmortem draft. Emoji reactions on the readiness-scan post. All of it captured with correlation.</li>
+</ol>
+<p>On Monday morning, <code>weekly-learning-loop</code> fires. The <strong>same agent</strong> analyzes its own last seven days and posts a ranked list of recommended changes:</p>
+<ul>
+<li>Agent-instruction diffs (proposed).</li>
+<li>Toolbox tool description or schema changes.</li>
+<li>Foundry IQ KB gaps — missing runbook sections, stale docs.</li>
+<li>Safety rubric additions.</li>
+<li>Retry / escalation policy tweaks.</li>
+</ul>
+<p>Crucially, the agent <strong>does not apply the changes</strong>. A human reviews the ranked list. The good ones ship. The bad ones don't. That's hill-climbing with a human in the loop — the same governance discipline that makes the other three loops safe.</p>
+<p>The output is compounding: an agent that behaves the same as last week is fine; an agent that behaves <em>better</em> than last week is a coworker.</p>
+<hr />
+<h2>Putting the four loops in one picture</h2>
+<figure class="figure" id="four-figure"><div class="slot" aria-label="loading diagram"></div><figcaption><span>// the four loops in one picture · dri-oncall-agent</span><span><a href="../assets/diagrams/dri-oncall-agent-four-loops.svg" download>&#8595; svg</a> &middot; <button type="button" id="four-png">&#8595; png</button></span></figcaption></figure>
+<p>Each loop has a distinct job. Each is anchored to a specific Foundry primitive:</p>
+<ul>
+<li><strong>Agent loop</strong> → Foundry Agent Runtime + Toolbox with Tool Search.</li>
+<li><strong>Verification loop</strong> → Foundry IQ Knowledge Base + explicit citation contract.</li>
+<li><strong>Event / routine loop</strong> → Teams / IcM / webhook events + Foundry routines.</li>
+<li><strong>Hill-climbing loop</strong> → routine run history + audit trail + human review.</li>
+</ul>
+<p>Take any one of these out and you have a demo. Put all four together, with an identity (Entra Agent ID), scoped tool permissions, and a kill switch, and you have something you can actually put on a Teams channel that 40 real people are watching.</p>
+<hr />
+<h2>Try it</h2>
+<p>Everything above is buildable today (routines in preview) against the artifacts in <a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/dri-oncall-agent/README.md"><code>demos/dri-oncall-agent/</code></a>:</p>
+<ul>
+<li><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/dri-oncall-agent/agent-instructions.md"><code>agent-instructions.md</code></a> — the full instruction set.</li>
+<li><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/dri-oncall-agent/toolbox-tools.json"><code>toolbox-tools.json</code></a> — the ten-tool Toolbox manifest with schemas.</li>
+<li><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/dri-oncall-agent/routines/"><code>routines/*.yaml</code></a> — the four Foundry routine manifests.</li>
+<li><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/dri-oncall-agent/sample-data/"><code>sample-data/*</code></a> — the exact fixtures used in this walkthrough. Point your MVP at these first.</li>
+<li><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/dri-oncall-agent/demo-script.md"><code>demo-script.md</code></a> — the presenter script if you want to record the 60-second cut.</li>
+</ul>
+<p>Phase it in: MVP with mocked tools against <code>sample-data/</code>, then a connected prototype in Teams with three live tools, then the full ten tools with the four routines deployed and an App Insights audit table wired up.</p>
+<p>The loop is the product. Toolbox with Tool Search on Foundry is what makes the loop cheap enough to build, safe enough to ship, and inspectable enough to trust.</p>
+<p class="nav" style="margin-top:2rem;">&gt;_ happy building.</p>
+<script src="../assets/svg-figure.js"></script>
+<script>
+(async function () {
+  const f = window.toolboxFigure;
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Inline the hero art + both diagrams so their CSS animations run and PNG export works.
+  const artSvg  = await f.inlineSVG('../assets/art/dri-oncall-agent.svg',
+                                    document.querySelector('#art-figure .slot'));
+  const loopSvg = await f.inlineSVG('../assets/diagrams/dri-oncall-agent-loop.svg',
+                                    document.querySelector('#loop-figure .slot'));
+  const fourSvg = await f.inlineSVG('../assets/diagrams/dri-oncall-agent-four-loops.svg',
+                                    document.querySelector('#four-figure .slot'));
+  document.getElementById('art-png').addEventListener('click', () => {
+    f.downloadPNG(artSvg, 'dri-oncall-agent--art.png', 2);
+  });
+  document.getElementById('loop-png').addEventListener('click', () => {
+    f.downloadPNG(loopSvg, 'dri-oncall-agent--agent-loop.png', 2);
+  });
+  document.getElementById('four-png').addEventListener('click', () => {
+    f.downloadPNG(fourSvg, 'dri-oncall-agent--four-loops.png', 2);
+  });
+  const verSvg  = await f.inlineSVG('../assets/diagrams/dri-oncall-agent-verification.svg',
+                                    document.querySelector('#verification-figure .slot'));
+  const evtSvg  = await f.inlineSVG('../assets/diagrams/dri-oncall-agent-events.svg',
+                                    document.querySelector('#events-figure .slot'));
+  const hillSvg = await f.inlineSVG('../assets/diagrams/dri-oncall-agent-hillclimbing.svg',
+                                    document.querySelector('#hillclimbing-figure .slot'));
+  document.getElementById('verification-png').addEventListener('click', () => {
+    f.downloadPNG(verSvg, 'dri-oncall-agent--verification-loop.png', 2);
+  });
+  document.getElementById('events-png').addEventListener('click', () => {
+    f.downloadPNG(evtSvg, 'dri-oncall-agent--event-routine-loop.png', 2);
+  });
+  document.getElementById('hillclimbing-png').addEventListener('click', () => {
+    f.downloadPNG(hillSvg, 'dri-oncall-agent--hill-climbing-loop.png', 2);
+  });
+
+  // Stagger-reveal the section headers and figures as they enter view.
+  document.body.classList.add('reveal-ready');
+  if (prefersReducedMotion) return;
+
+  const targets = document.querySelectorAll('.cl h2, .cl h3, .cl .figure');
+  targets.forEach(el => { el.style.opacity = '0'; el.style.transform = 'translateY(8px)'; });
+  const observer = new IntersectionObserver((entries) => {
+    const shown = entries.filter(e => e.isIntersecting).map(e => e.target);
+    if (!shown.length) return;
+    anime({
+      targets: shown,
+      opacity: [0, 1],
+      translateY: [8, 0],
+      duration: 500,
+      delay: anime.stagger(70),
+      easing: 'easeOutCubic'
+    });
+    shown.forEach(t => observer.unobserve(t));
+  }, { threshold: 0.15 });
+  targets.forEach(t => observer.observe(t));
+
+  // Subtle hero pulse on the title underline.
+  anime({
+    targets: '.cl h1',
+    borderBottomColor: ['rgba(26,26,26,1)', 'rgba(26,26,26,0.35)', 'rgba(26,26,26,1)'],
+    duration: 2400,
+    easing: 'easeInOutSine',
+    direction: 'alternate',
+    loop: true
+  });
+})();
+</script>
+</body></html>
