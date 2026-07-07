@@ -1,0 +1,32 @@
+version: 1
+services:
+  payments-api:
+    repo: contoso/payments-api
+    adoAreaPath: Contoso\Payments\API
+    primary:
+      name: Alice Zhang
+      alias: alicez
+      email: alicez@contoso.example
+    secondary:
+      name: Rohit Mehta
+      alias: rmehta
+      email: rmehta@contoso.example
+    manager:
+      name: David Chen
+      alias: dchen
+      email: dchen@contoso.example
+    escalation:
+      - alicez
+      - rmehta
+      - dchen
+  payments-ledger:
+    repo: contoso/payments-ledger
+    adoAreaPath: Contoso\Payments\Ledger
+    primary:
+      name: Priya Nair
+      alias: priyan
+      email: priyan@contoso.example
+    manager:
+      name: David Chen
+      alias: dchen
+      email: dchen@contoso.example

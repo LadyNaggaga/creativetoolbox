@@ -1,0 +1,20 @@
+# Foundry routine (preview) — 24-hour postmortem draft
+# One-shot timer scheduled by the agent when an incident is resolved.
+name: postmortem-draft-24h
+description: >
+  24 hours after resolution, produce a postmortem DRAFT for human review.
+  Never publishes.
+trigger:
+  type: timer
+  at: "{{ incident.resolvedAt | dateAdd('PT24H') }}"
+  timeZone: "UTC"
+action:
+  type: invoke_agent
+  agentName: dri-agent-payments
+  inputPrompt: |
+    Draft a postmortem for incident {{ incident.id }}.
+    Sections: Timeline, Impact, Root cause (hypothesis), Contributing factors,
+    Action items, KB/runbook updates.
+    Mark the output as DRAFT in the header. Do not publish or notify anyone
+    beyond the incident thread. Cite every claim.
+enabled: true

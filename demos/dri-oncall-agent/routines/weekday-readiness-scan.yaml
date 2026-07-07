@@ -1,0 +1,22 @@
+# Foundry routine (preview) — weekday readiness scan
+# Deploy via azd or the Foundry portal. Requires configured agent identity.
+name: weekday-readiness-scan
+description: >
+  Weekday morning summary of open incidents, risky deployments in the last 24 hours,
+  stale alerts, service health, and unresolved action items across payments-* services.
+trigger:
+  type: schedule
+  cronExpression: "0 8 * * 1-5"
+  timeZone: "America/Los_Angeles"
+action:
+  type: invoke_agent
+  agentName: dri-agent-payments
+  inputPrompt: |
+    Produce the weekday readiness post for #payments-oncall.
+    Sections: Open incidents, Risky deployments (24h), Stale alerts, Unresolved action items, Recommended focus.
+    Cite every item. Mark low-confidence items explicitly. Do not take any action.
+enabled: true
+# Notes:
+# - Foundry routines are preview. Confirm regional availability in your project.
+# - Minimum schedule interval is 5 minutes.
+# - Each routine has one action and invokes an agent via the Responses/Invocations API.

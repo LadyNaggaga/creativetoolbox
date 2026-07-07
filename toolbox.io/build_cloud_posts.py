@@ -61,6 +61,7 @@ HEAD = """<!doctype html><html lang="en"><head><meta charset="utf-8">
 FIG_STYLE = ""
 
 TAIL = """
+<p class="nav" style="margin-top:2rem;">&gt;_ happy building.</p>
 <script src="../assets/svg-figure.js"></script>
 <script>
 (async function () {{

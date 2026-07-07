@@ -1,0 +1,332 @@
+{
+  "$schema": "https://aka.ms/foundry-toolbox-manifest",
+  "toolbox": "dri-agent-payments",
+  "description": "Toolbox manifest for the DRI / On-Call Independent Agent. Uses Toolbox with Tool Search on Foundry.",
+  "tools": [
+    {
+      "name": "search_foundry_iq_kb",
+      "kind": "read",
+      "description": "Retrieve runbooks, service docs, ownership docs, incident retros, and engineering wiki content from Foundry IQ Knowledge Base.",
+      "input": {
+        "type": "object",
+        "required": ["query"],
+        "properties": {
+          "query": { "type": "string" },
+          "filters": {
+            "type": "object",
+            "properties": {
+              "source": { "type": "array", "items": { "type": "string", "enum": ["runbook", "ownership", "retro", "wiki"] } },
+              "service": { "type": "string" }
+            }
+          },
+          "maxResults": { "type": "integer", "default": 5 }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "snippets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": { "type": "string" },
+                "url": { "type": "string" },
+                "section": { "type": "string" },
+                "text": { "type": "string" },
+                "updatedAt": { "type": "string", "format": "date-time" },
+                "confidence": { "type": "number" }
+              }
+            }
+          }
+        }
+      },
+      "auth": "foundry-iq-kb-reader",
+      "approvalRequired": false
+    },
+    {
+      "name": "query_telemetry_kql",
+      "kind": "read",
+      "description": "Query service telemetry, logs, traces, error rates, and deployments (Fabric IQ / App Insights).",
+      "input": {
+        "type": "object",
+        "required": ["serviceName", "timeRange"],
+        "properties": {
+          "serviceName": { "type": "string" },
+          "environment": { "type": "string", "enum": ["prod", "canary", "staging"] },
+          "region": { "type": "string" },
+          "timeRange": { "type": "string", "description": "ISO 8601 duration or interval, e.g. PT30M or 2026-07-06T13:30Z/2026-07-06T14:30Z" },
+          "queryIntent": { "type": "string", "description": "Natural-language description; the tool generates KQL." },
+          "kql": { "type": "string", "description": "Optional explicit KQL. If present, overrides queryIntent." }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "summary": { "type": "string" },
+          "rows": { "type": "array", "items": { "type": "object" } },
+          "series": { "type": "array" },
+          "queryText": { "type": "string" },
+          "confidence": { "type": "number" }
+        }
+      },
+      "auth": "fabric-iq-reader",
+      "approvalRequired": false
+    },
+    {
+      "name": "search_work_context",
+      "kind": "read",
+      "description": "Find relevant Teams discussions, emails, meetings, and documents through Work IQ.",
+      "input": {
+        "type": "object",
+        "required": ["query"],
+        "properties": {
+          "query": { "type": "string" },
+          "timeRange": { "type": "string" },
+          "people": { "type": "array", "items": { "type": "string" } },
+          "sources": { "type": "array", "items": { "type": "string", "enum": ["teams", "email", "calendar", "docs"] } }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "summary": { "type": "string" },
+                "url": { "type": "string" },
+                "source": { "type": "string" },
+                "at": { "type": "string", "format": "date-time" }
+              }
+            }
+          }
+        }
+      },
+      "auth": "work-iq",
+      "approvalRequired": false,
+      "privacyNote": "Do not surface private message/email bodies without explicit human confirmation."
+    },
+    {
+      "name": "inspect_recent_changes",
+      "kind": "read",
+      "description": "Inspect GitHub / ADO PRs, commits, deployments, builds, and work items for a service.",
+      "input": {
+        "type": "object",
+        "required": ["serviceName", "timeRange"],
+        "properties": {
+          "serviceName": { "type": "string" },
+          "repo": { "type": "string" },
+          "timeRange": { "type": "string" },
+          "filters": {
+            "type": "object",
+            "properties": {
+              "kind": { "type": "array", "items": { "type": "string", "enum": ["pr", "commit", "deploy", "workitem", "build"] } }
+            }
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "changes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "kind": { "type": "string" },
+                "id": { "type": "string" },
+                "title": { "type": "string" },
+                "by": { "type": "string" },
+                "at": { "type": "string", "format": "date-time" },
+                "url": { "type": "string" },
+                "risk": { "type": "string", "enum": ["low", "medium", "high"] }
+              }
+            }
+          }
+        }
+      },
+      "auth": "github-mcp+ado-mcp",
+      "approvalRequired": false
+    },
+    {
+      "name": "find_service_owner",
+      "kind": "read",
+      "description": "Resolve DRI / service owner from ownership metadata, ADO area path, CODEOWNERS, or KB.",
+      "input": {
+        "type": "object",
+        "required": ["serviceName"],
+        "properties": {
+          "serviceName": { "type": "string" },
+          "component": { "type": "string" },
+          "repo": { "type": "string" },
+          "areaPath": { "type": "string" }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "primary": { "type": "object", "properties": { "name": { "type": "string" }, "alias": { "type": "string" } } },
+          "secondary": { "type": "object" },
+          "manager": { "type": "object" },
+          "confidence": { "type": "number" },
+          "source": { "type": "string" }
+        }
+      },
+      "auth": "ownership-reader",
+      "approvalRequired": false
+    },
+    {
+      "name": "create_tracking_item",
+      "kind": "action",
+      "description": "Create an ADO bug, GitHub issue, or IcM child task.",
+      "input": {
+        "type": "object",
+        "required": ["title", "system", "approvalToken"],
+        "properties": {
+          "system": { "type": "string", "enum": ["ado", "github", "icm"] },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "severity": { "type": "string", "enum": ["sev1", "sev2", "sev3", "sev4"] },
+          "assignee": { "type": "string" },
+          "links": { "type": "array", "items": { "type": "string" } },
+          "approvalToken": { "type": "string" }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "itemId": { "type": "string" },
+          "url": { "type": "string" },
+          "auditId": { "type": "string" }
+        }
+      },
+      "auth": "ado-writer+github-writer+icm-writer",
+      "approvalRequired": true
+    },
+    {
+      "name": "draft_mitigation",
+      "kind": "read",
+      "description": "Produce a rollback or mitigation recommendation with commands, risk assessment, and validation queries. Does not execute.",
+      "input": {
+        "type": "object",
+        "required": ["incidentSummary"],
+        "properties": {
+          "incidentSummary": { "type": "string" },
+          "suspectedCause": { "type": "string" },
+          "runbookRefs": { "type": "array", "items": { "type": "string" } },
+          "changeRefs": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "steps": { "type": "array", "items": { "type": "string" } },
+          "commands": { "type": "array", "items": { "type": "string" } },
+          "blastRadius": { "type": "string" },
+          "risk": { "type": "string", "enum": ["low", "medium", "high"] },
+          "validationKql": { "type": "string" },
+          "approvalRequired": { "type": "boolean" }
+        }
+      },
+      "auth": "none",
+      "approvalRequired": false
+    },
+    {
+      "name": "execute_approved_action",
+      "kind": "action",
+      "description": "Run an approved rollback, create a PR, send a notification, or update an incident. Requires explicit human approval every time.",
+      "input": {
+        "type": "object",
+        "required": ["actionType", "approvedBy", "approvalToken", "payload"],
+        "properties": {
+          "actionType": { "type": "string", "enum": ["rollback", "create_pr", "notify", "update_incident"] },
+          "approvedBy": { "type": "string" },
+          "approvalToken": { "type": "string" },
+          "payload": { "type": "object" }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "result": { "type": "string", "enum": ["succeeded", "failed", "partial"] },
+          "links": { "type": "array", "items": { "type": "string" } },
+          "auditId": { "type": "string" }
+        }
+      },
+      "auth": "action-executor",
+      "approvalRequired": true
+    },
+    {
+      "name": "schedule_foundry_routine",
+      "kind": "action",
+      "description": "Create or update a Foundry routine for scheduled or timer-based agent invocation. Preview capability.",
+      "input": {
+        "type": "object",
+        "required": ["routineName", "triggerType", "agentName", "inputPrompt", "approvalToken"],
+        "properties": {
+          "routineName": { "type": "string" },
+          "description": { "type": "string" },
+          "triggerType": { "type": "string", "enum": ["schedule", "timer"] },
+          "cronExpression": { "type": "string" },
+          "at": { "type": "string", "format": "date-time" },
+          "timeZone": { "type": "string" },
+          "actionType": { "type": "string", "enum": ["invoke_agent"] },
+          "agentName": { "type": "string" },
+          "inputPrompt": { "type": "string" },
+          "enabled": { "type": "boolean" },
+          "approvalToken": { "type": "string" }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "routineName": { "type": "string" },
+          "enabled": { "type": "boolean" },
+          "nextRun": { "type": "string", "format": "date-time" },
+          "managementUrl": { "type": "string" }
+        }
+      },
+      "auth": "foundry-routines-writer",
+      "approvalRequired": true,
+      "note": "Foundry routines are preview. Minimum interval 5 minutes. Requires configured agent identity."
+    },
+    {
+      "name": "inspect_routine_runs",
+      "kind": "read",
+      "description": "Review Foundry routine run history for accountability, debugging, and hill-climbing analysis.",
+      "input": {
+        "type": "object",
+        "required": ["routineName"],
+        "properties": {
+          "routineName": { "type": "string" },
+          "timeRange": { "type": "string" },
+          "statusFilter": { "type": "array", "items": { "type": "string", "enum": ["succeeded", "failed", "running", "cancelled"] } }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "runs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "status": { "type": "string" },
+                "phase": { "type": "string" },
+                "startedAt": { "type": "string", "format": "date-time" },
+                "endedAt": { "type": "string", "format": "date-time" },
+                "dispatchId": { "type": "string" },
+                "responseId": { "type": "string" },
+                "errorSummary": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "auth": "foundry-routines-reader",
+      "approvalRequired": false
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "number": 8821,
+  "repo": "contoso/payments-api",
+  "title": "Refactor idempotency-key cache TTL",
+  "author": "alicez",
+  "mergedAt": "2026-07-06T13:41:00Z",
+  "mergedSha": "a91b4c",
+  "reviewers": ["rmehta"],
+  "checks": { "ci": "passed", "e2e": "passed", "canary": "skipped" },
+  "filesChanged": [
+    "src/idempotency/cache.ts",
+    "src/idempotency/ttl.ts",
+    "test/idempotency/cache.spec.ts"
+  ],
+  "diffSummary": "Change idempotency cache TTL from sliding 10m to fixed 2m. Simplify eviction to LRU-only. Remove background sweep.",
+  "linkedIssues": ["#8790 idempotency memory usage"],
+  "url": "https://github.example/contoso/payments-api/pull/8821"
+}

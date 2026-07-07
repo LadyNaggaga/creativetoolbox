@@ -1,0 +1,21 @@
+{
+  "icmId": "IcM-4471293",
+  "severity": "sev2",
+  "service": "payments-api",
+  "component": "charge-endpoint",
+  "region": "westus2",
+  "environment": "prod",
+  "metric": "http_5xx_rate",
+  "value": 0.183,
+  "threshold": 0.02,
+  "windowMinutes": 5,
+  "detectedAt": "2026-07-06T14:07:00Z",
+  "deploymentRef": {
+    "deployId": "dep-20260706-payments-api-2143",
+    "version": "v2.14.3",
+    "sha": "a91b4c",
+    "at": "2026-07-06T13:47:00Z"
+  },
+  "sourceAlert": "az-monitor-rule/payments-api-5xx-westus2",
+  "channel": "#payments-oncall"
+}

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace">
+  <title>dri-oncall-agent — the verification loop · toolbox.io</title>
+  <desc>Every claim cited, every action validated. Claim → citation object; action → post-run validation query. CC0.</desc>
+  <style>
+    .ink{stroke:#1a1a1a;fill:none;} .box{stroke:#1a1a1a;stroke-width:2;fill:none;}
+    .smbox{stroke:#1a1a1a;stroke-width:1.5;fill:none;}
+    .dash{stroke:#1a1a1a;stroke-width:1.5;fill:none;stroke-dasharray:5 4;}
+    .lbl{font-size:14px;fill:#6b6b68;} .hd{font-size:22px;font-weight:700;fill:#1a1a1a;}
+    .smhd{font-size:15px;font-weight:700;fill:#1a1a1a;}
+    .row{font-size:13px;fill:#1a1a1a;} .rowf{font-size:12px;fill:#6b6b68;}
+    .fi{fill:#1a1a1a;} .ff{fill:#6b6b68;}
+    .blink{animation:blink 1s steps(1) infinite;} @keyframes blink{50%{opacity:0;}}
+
+    /* claim → citation (top row) */
+    .tokC{offset-path:path('M 380 200 L 820 200');animation:travel 3.2s linear infinite;}
+    /* action → validation (middle row, one-way to result) */
+    .tokV{offset-path:path('M 380 360 L 820 360');animation:travel 3.2s linear infinite;animation-delay:.8s;}
+    @keyframes travel{0%{offset-distance:0%;opacity:0;}8%{opacity:1;}92%{opacity:1;}100%{offset-distance:100%;opacity:0;}}
+    @media (prefers-reduced-motion: reduce){.tokC,.tokV,.blink{animation:none;}}
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1a1a1a"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="630" fill="#d6d6d4"/>
+  <rect x="20" y="20" width="1160" height="590" class="box"/>
+
+  <g transform="translate(60,75)">
+    <text class="hd">&gt;_ loop 2 · the verification loop</text>
+    <text y="30" class="lbl">every claim cited · every action validated after the fact · foundry iq kb behind the citations</text>
+  </g>
+
+  <!-- Row 1: Claim  →  Citation (clear channel between them) -->
+  <g transform="translate(80,155)">
+    <rect width="300" height="120" class="smbox"/>
+    <text x="14" y="24" class="lbl">// agent output</text>
+    <text x="14" y="50" class="smhd">claim</text>
+    <text x="14" y="76" class="row">"idempotency-key cache</text>
+    <text x="14" y="94" class="row">misconfig regressed 5xx"</text>
+    <text x="14" y="112" class="rowf">confidence: 0.82</text>
+  </g>
+
+  <g transform="translate(820,155)">
+    <rect width="300" height="120" class="smbox"/>
+    <text x="14" y="24" class="lbl">// foundry iq kb</text>
+    <text x="14" y="50" class="smhd">citation object</text>
+    <text x="14" y="72" class="row">{source, title, url,</text>
+    <text x="14" y="90" class="row"> updatedAt, confidence}</text>
+    <text x="14" y="108" class="rowf">runbook §Mitigation/1</text>
+  </g>
+
+  <!-- Row 2: Action → Validation (parallel row, clear channel between them) -->
+  <g transform="translate(80,315)">
+    <rect width="300" height="100" class="smbox"/>
+    <text x="14" y="24" class="lbl">// action tool</text>
+    <text x="14" y="50" class="smhd">rollback v2.14.3 → v2.14.2</text>
+    <text x="14" y="76" class="rowf">westus2 · 1 svc · ~10k rps</text>
+  </g>
+
+  <g transform="translate(820,315)">
+    <rect width="300" height="100" class="smbox"/>
+    <text x="14" y="24" class="lbl">// validation kql (from runbook)</text>
+    <text x="14" y="50" class="smhd">recovery verified</text>
+    <text x="14" y="76" class="rowf">5xx = 0.4% · query text posted</text>
+  </g>
+
+  <!-- Arrows in the clear middle channel -->
+  <g class="ink" stroke-width="2">
+    <line x1="380" y1="200" x2="815" y2="200" marker-end="url(#arr)"/>
+    <line x1="380" y1="360" x2="815" y2="360" marker-end="url(#arr)"/>
+  </g>
+  <text x="600" y="192" class="rowf" text-anchor="middle">cite (no claim without a citation)</text>
+  <text x="600" y="352" class="rowf" text-anchor="middle">act, then verify (+2 min · re-run the runbook query)</text>
+
+  <!-- Contract summary bar at the bottom (no arrow overlap) -->
+  <g transform="translate(80,455)">
+    <rect width="1040" height="110" class="dash"/>
+    <text x="16" y="24" class="lbl">// contract (lives in agent instructions)</text>
+    <text x="16" y="50" class="row">▸ no claim without a citation object   ▸ telemetry claim → include exact query text</text>
+    <text x="16" y="72" class="row">▸ confidence &lt; 0.6 or conflicting sources → escalate, don't act</text>
+    <text x="16" y="94" class="row">▸ every action tool must be followed by a validation step (re-run diagnostic query, confirm recovery)</text>
+  </g>
+
+  <g fill="#1a1a1a">
+    <circle r="5" class="tokC"/>
+    <circle r="5" class="tokV"/>
+  </g>
+
+  <g transform="translate(60,600)">
+    <text class="fi" font-size="14" font-weight="700">toolbox.io<tspan class="blink fi"> _</tspan></text>
+    <text x="800" class="ff" font-size="11">verification loop · dri-oncall-agent · CC0 · 1200×630</text>
+  </g>
+</svg>

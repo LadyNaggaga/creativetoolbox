@@ -63,6 +63,30 @@
       "tokens": { "turns": 6, "pinned": 0 }
     }
   ],
+  "trends": [
+    {
+      "slug": "dri-oncall-agent",
+      "title": "DRI On-Call Agent \u2014 the agent loop",
+      "blurb": "Walk the four loops (reason \u2192 verify \u2192 wait \u2192 learn) through a real Friday incident. All four anchored to Foundry primitives.",
+      "repo": "https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/dri-oncall-agent",
+      "blog": "blog/dri-oncall-agent.html",
+      "lean": "agent loop + governance",
+      "boxSize": 24,
+      "tokens": { "turns": 5, "pinned": 0 }
+    },
+    {
+      "title": "Governed Autonomy",
+      "blurb": "Approval-gated action tools, Entra Agent ID, and audit trails \u2014 what \"the agent is on-call\" actually needs.",
+      "lean": "policy + identity",
+      "status": "coming-soon"
+    },
+    {
+      "title": "Routines & Events",
+      "blurb": "Foundry routines turn webhooks, schedules, and Teams events into first-class agent triggers \u2014 no bespoke plumbing.",
+      "lean": "event loop",
+      "status": "coming-soon"
+    }
+  ],
   "share": [
     {
       "title": "GitHub Copilot",

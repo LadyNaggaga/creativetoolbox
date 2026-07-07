@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 720" width="1600" height="720" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace">
+  <title>dri-oncall-agent — four rings, one agent</title>
+  <desc>Four concentric loops (agent · verification · event/routine · hill-climbing) drawn as thin monochrome rings with tokens traveling each. CC0.</desc>
+
+  <style>
+    .ring       { fill: none; stroke: #1a1a1a; stroke-width: 2; }
+    .ring.dash  { stroke-dasharray: 6 6; }
+    .ring.faint { stroke: #6b6b68; stroke-width: 1.5; stroke-dasharray: 2 4; }
+    .lbl        { font-size: 15px; fill: #6b6b68; letter-spacing: .04em; }
+    .hd         { font-size: 42px; font-weight: 700; fill: #1a1a1a; letter-spacing: -.01em; }
+    .sub        { font-size: 16px; fill: #6b6b68; }
+    .tag        { font-size: 12px; fill: #1a1a1a; letter-spacing: .06em; }
+    .tagf       { font-size: 12px; fill: #6b6b68; letter-spacing: .06em; }
+    .fi         { fill: #1a1a1a; }
+    .ff         { fill: #6b6b68; }
+    .blink      { animation: blink 1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* Four tokens, one per ring, traveling clockwise at different tempos.
+       cx/cy = 940 360 (art center). Radii: 260, 200, 140, 80. */
+    .t1 { offset-path: path('M 1200 360 A 260 260 0 1 1 1199.9 360 Z'); animation: orbit 6s linear infinite; }
+    .t2 { offset-path: path('M 1140 360 A 200 200 0 1 1 1139.9 360 Z'); animation: orbit 4.5s linear infinite; animation-delay: .3s; }
+    .t3 { offset-path: path('M 1080 360 A 140 140 0 1 1 1079.9 360 Z'); animation: orbit 3.2s linear infinite; animation-delay: .6s; }
+    .t4 { offset-path: path('M 1020 360 A 80 80 0 1 1 1019.9 360 Z'); animation: orbit 2s linear infinite; animation-delay: .9s; }
+    @keyframes orbit {
+      0%   { offset-distance: 0%;   opacity: 0; }
+      6%   { opacity: 1; }
+      94%  { opacity: 1; }
+      100% { offset-distance: 100%; opacity: 0; }
+    }
+    /* Subtle text bloom on the innermost label */
+    .core {
+      animation: coreFade 4s ease-in-out infinite alternate;
+    }
+    @keyframes coreFade {
+      0%   { opacity: .55; }
+      100% { opacity: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .t1,.t2,.t3,.t4,.blink,.core { animation: none; }
+      .core { opacity: 1; }
+    }
+  </style>
+
+  <!-- backdrop -->
+  <rect width="1600" height="720" fill="#d6d6d4"/>
+  <rect x="20" y="20" width="1560" height="680" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+
+  <!-- header on the left -->
+  <g transform="translate(80,110)">
+    <text class="lbl">&gt;_ dri-oncall-agent · four loops, one agent</text>
+    <text y="70" class="hd">reason.</text>
+    <text y="120" class="hd">verify.</text>
+    <text y="170" class="hd">wait.</text>
+    <text y="220" class="hd">learn.</text>
+    <text y="270" class="sub">the loop around the model is the whole story.</text>
+    <text y="292" class="sub">toolbox with tool search on foundry · CC0</text>
+  </g>
+
+  <!-- concentric rings on the right, centered at (1200, 360) -->
+  <g>
+    <!-- outer glow rings (decoration) -->
+    <circle cx="1200" cy="360" r="310" class="ring faint"/>
+    <circle cx="1200" cy="360" r="290" class="ring faint"/>
+
+    <!-- ring 4 · hill-climbing (outermost, dashed = weekly cadence) -->
+    <circle cx="1200" cy="360" r="260" class="ring dash"/>
+    <!-- ring 3 · event / routine -->
+    <circle cx="1200" cy="360" r="200" class="ring"/>
+    <!-- ring 2 · verification -->
+    <circle cx="1200" cy="360" r="140" class="ring"/>
+    <!-- ring 1 · agent loop (innermost) -->
+    <circle cx="1200" cy="360" r="80" class="ring"/>
+
+    <!-- Ring labels (top-anchored on each ring) -->
+    <g class="tagf">
+      <text x="1200" y="82"  text-anchor="middle">// loop 4 · hill-climbing (weekly)</text>
+      <text x="1200" y="142" text-anchor="middle" class="tag">// loop 3 · event / routine</text>
+      <text x="1200" y="202" text-anchor="middle" class="tag">// loop 2 · verification</text>
+      <text x="1200" y="262" text-anchor="middle" class="tag">// loop 1 · agent</text>
+    </g>
+
+    <!-- Core label -->
+    <g class="core">
+      <text x="1200" y="352" text-anchor="middle" font-size="14" fill="#1a1a1a" font-weight="700">reason</text>
+      <text x="1200" y="372" text-anchor="middle" font-size="11" fill="#6b6b68">→ tool → observe</text>
+    </g>
+
+    <!-- 4 traveling tokens, one per ring -->
+    <g fill="#1a1a1a">
+      <circle r="6" class="t1"/>
+      <circle r="5" class="t2"/>
+      <circle r="4" class="t3"/>
+      <circle r="3" class="t4"/>
+    </g>
+  </g>
+
+  <!-- footer -->
+  <g transform="translate(80,660)">
+    <text class="fi" font-size="16" font-weight="700">toolbox.io<tspan class="blink fi"> _</tspan></text>
+    <text x="1440" class="ff" font-size="12" text-anchor="end">art · dri-oncall-agent · CC0 · 1600×720</text>
+  </g>
+</svg>
