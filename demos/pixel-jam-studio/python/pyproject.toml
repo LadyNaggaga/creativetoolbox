@@ -1,0 +1,13 @@
+[project]
+name = "pixel-jam-studio-demo"
+version = "0.1.0"
+description = "Pixel Jam Studio — a Toolbox + Routines + Copilot-SDK style demo"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+live = ["github-copilot-sdk", "httpx"]
+real = ["azure-ai-projects", "azure-identity", "mcp"]
+
+[tool.uv]
+package = false

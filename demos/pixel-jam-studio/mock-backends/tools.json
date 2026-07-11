@@ -1,0 +1,25 @@
+{
+  "search_enabled": true,
+  "_comment": "THE BOX for pixel-jam-studio. Hero tools have rich descriptions + additional_search_text and live in hero_tools/. code_scribe.write_game is the Copilot-SDK-style code emitter — it writes a real playable index.html to disk. leaderboard_cabinet.post carries require_approval=always to show approval gating on the ship step.",
+  "tools": [
+    { "name": "theme_wheel.spin", "description": "Spin the game-jam theme wheel to pick a wildcard theme for the jam; use when starting a new jam or brainstorming a fresh concept.", "additional_search_text": "theme prompt wildcard jam idea kickoff brainstorm concept spin the wheel roll a theme" },
+    { "name": "asset_studio.generate", "description": "Generate or pick pixel-art sprites and tiles for the game — the player, enemies, items, background — sized for an HTML5 canvas.", "additional_search_text": "sprite pixel art tile background character enemy item art assets graphics draw make sprites" },
+    { "name": "sfx_foley.pick", "description": "Pick 8-bit sound effects for jumps, coins, hits, and menu blips; returns short base64 wav-ish blobs the game embeds.", "additional_search_text": "sfx sound effect blip chirp jump coin hit menu bleep boop audio noise foley" },
+    { "name": "chiptune_jukebox.pick", "description": "Pick a looping chiptune background music track that matches a mood or theme.", "additional_search_text": "bgm background music soundtrack chiptune loop mood spooky upbeat calm music track" },
+    { "name": "code_scribe.write_game", "description": "Emit a complete playable HTML5 canvas game to disk from a spec (theme, sprites, sfx, bgm, mechanics); this is the Copilot-SDK-style code-writing step that produces the real index.html.", "additional_search_text": "write code build game generate html5 canvas javascript prototype scaffold emit source file index html playable" },
+    { "name": "playtest_arcade.run", "description": "Headless-playtest the current build: reports FPS, a fun-score, and any crash logs; use after every code change to see if the game is fun and stable.", "additional_search_text": "playtest test run headless simulate qa fun score fps crash bug does it play is it fun" },
+    { "name": "jam_judge.score", "description": "Score a shipped game on the jam rubric — originality, polish, theme fit — and return a verdict blurb like a jam-site comment.", "additional_search_text": "judge rubric grade score originality polish theme fit review verdict rating final score" },
+    { "name": "leaderboard_cabinet.post", "description": "Post the finished game to the arcade leaderboard cabinet so other jammers can see it and add their high scores; guarded action that requires jam-lead approval before it goes live.", "additional_search_text": "submit ship publish leaderboard cabinet post release ship it upload to the arcade", "require_approval": "always" },
+
+    { "name": "theme_wheel.list_past", "description": "List past themes the wheel has landed on this season." },
+    { "name": "asset_studio.palette_swap", "description": "Recolor an existing sprite sheet to a new palette." },
+    { "name": "sfx_foley.record_custom", "description": "Record a custom SFX from a text description." },
+    { "name": "chiptune_jukebox.list_tracks", "description": "List all available chiptune loops in the jukebox." },
+    { "name": "code_scribe.patch_game", "description": "Apply a small patch to an already-written game file (bug fix or tuning tweak)." },
+    { "name": "playtest_arcade.record_replay", "description": "Record a video replay of the last playtest run." },
+    { "name": "jam_judge.list_rubric", "description": "Read the current jam judging rubric." },
+    { "name": "leaderboard_cabinet.top_scores", "description": "Read the current top scores on the cabinet." },
+    { "name": "devlog.publish_post", "description": "Publish a devlog entry about the jam." },
+    { "name": "backup.snapshot_build", "description": "Snapshot the current build to a versioned backup." }
+  ]
+}
