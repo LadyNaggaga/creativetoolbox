@@ -1,0 +1,118 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pixel Jam Studio — toolbox.io</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/favicon-180.png">
+<link rel="stylesheet" href="../assets/commandline.css">
+<style>
+ body.cl{max-width:820px;margin:0 auto;padding:2rem 1.25rem;font-size:15px;}
+ .cl h1{border-bottom:2px solid var(--cl-line);padding-bottom:.3rem;}
+ .cl pre{border:1px solid var(--cl-line);padding:12px 14px;overflow:auto;background:#cfcfcd;white-space:pre;}
+ .cl ul{padding-left:1.2rem;} .cl li{margin:.2rem 0;}
+ .cl table{width:100%;border-collapse:collapse;margin:.6rem 0;font-size:.93em;}
+ .cl th,.cl td{border:1px solid var(--cl-line);padding:.4rem .55rem;vertical-align:top;text-align:left;}
+ .cl th{background:#cfcfcd;font-weight:700;}
+ .nav{margin-bottom:1rem;} .nav a{color:var(--cl-ink);text-decoration:underline;}
+ .playframe{border:1px solid var(--cl-line);background:var(--cl-bg);}
+ .playframe img{display:block;width:100%;height:auto;}
+ .playframe figcaption{display:flex;justify-content:space-between;gap:1rem;padding:.4rem .7rem;border-top:1px solid var(--cl-line);font-family:var(--cl-mono);font-size:.78rem;color:var(--cl-faint);}
+ .playframe figcaption a{color:var(--cl-ink);text-decoration:underline;}
+</style></head><body class="cl">
+<p class="nav"><a href="../index.html">&larr; back to gallery</a></p>
+<h1><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/pixel-jam-studio" style="color:inherit;text-decoration:none">I told an AI studio-mate to build me a game in one tool call</a></h1>
+<p class="nav"><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/pixel-jam-studio">view the demo code on GitHub &rarr;</a></p>
+
+<p>I gave a fake game jam an AI studio-mate, put 18 studio tools behind a single Toolbox endpoint on Foundry, wrapped the whole flow in <strong>Routines</strong> (kickoff → prototype → playtest → ship), and let the <strong>GitHub Copilot SDK</strong>'s code-emitting muscle write a <strong>real playable HTML5 game</strong> to disk. Same principle as the other demos — <strong>big box, tiny context</strong> — but this one you can actually <em>play</em> at the end.</p>
+
+<figure class="playframe">
+  <img src="../assets/gifs/pixel-jam-studio.gif" alt="Pixel Jam Studio — 8 seconds of gameplay: the soda-can player dodges ghosts and grabs candy bars on a graph-paper canvas" style="display:block;width:100%;height:auto;">
+  <figcaption>
+    <span>// 8s of scripted gameplay · monochrome · CC0</span>
+    <span><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/pixel-jam-studio" target="_blank" rel="noopener">↗ run it locally to play</a></span>
+  </figcaption>
+</figure>
+
+<h2>What it does</h2>
+<p><code>pixel-jam-studio</code> runs a 48-hour jam in about 30 seconds of terminal output:</p>
+<ul>
+<li>🎡 <strong>kickoff</strong> — spin the theme wheel (lands on <em>Haunted Vending Machine</em>)</li>
+<li>🎨 <strong>prototype</strong> — pick sprites, grab a chiptune loop, add 8-bit SFX, then emit a complete <code>index.html</code></li>
+<li>🎮 <strong>playtest_loop</strong> — headless playtest twice, watch the fun-score climb</li>
+<li>🚀 <strong>ship_it</strong> — get judged, ship to the arcade cabinet</li>
+</ul>
+<p>Nine plain-English turns, nine different studio stations. It runs locally with <code>make demo</code> — no Azure, no model key. When it finishes, it prints a <code>file://</code> link to a real playable HTML5 canvas game.</p>
+
+<h2>The trick</h2>
+<p>Same as the others: <code>{"type": "toolbox_search_preview"}</code> is on, so the model only ever sees <code>tool_search</code> (say what you need) and <code>call_tool</code> (run it). Eighteen studio tools behind the box, two in front of the model.</p>
+<p>What's new here is the <strong>code-emission moment</strong>: one of those tools, <code>code_scribe.write_game</code>, is the "coding-agent" step. In this demo it stamps a real playable game from a template; in <code>--live</code> mode the Copilot SDK writes the source itself.</p>
+
+<pre><code>&gt;_ user: &quot;okay, write the actual game code now&quot;
+   [tool_search] query: &quot;write a complete playable html5 canvas game to disk from the spec&quot;   // round-trip #5
+   [matched]     code_scribe.write_game, asset_studio.generate, playtest_arcade.run, ...
+   [call_tool]   code_scribe.write_game({ theme:&quot;Haunted Vending Machine&quot;, sprites:..., bgm:... })
+   =&gt; wrote game-output/index.html (~200 lines) — open it in a browser to play
+tools in box: 18   ·   tools in model context: 2
+</code></pre>
+
+<h2>What I used to build the game — and why</h2>
+<table>
+<thead><tr><th>Piece</th><th>What it does</th><th>Why it's here</th></tr></thead>
+<tbody>
+<tr><td><strong>Toolbox with Tool Search on Foundry</strong></td><td>One MCP endpoint hides 18 tools; only <code>tool_search</code> + <code>call_tool</code> reach the model</td><td>Big box, tiny context. Add a 19th studio tool without touching agent code.</td></tr>
+<tr><td><strong>Routines</strong></td><td>Named phases (<code>kickoff</code>, <code>prototype</code>, <code>playtest_loop</code>, <code>ship_it</code>) that group the calls</td><td>Shapes the "ceremony" of the jam; makes the flow legible on screen and easy to re-run.</td></tr>
+<tr><td><strong>GitHub Copilot SDK</strong></td><td>Same agent runtime that powers Copilot CLI, embeddable in any app via JSON-RPC</td><td>It's the code-emitter. Games are files; the SDK's whole point is that an agent can write files. <code>code_scribe.write_game</code> is where a real Copilot-SDK agent takes over in <code>--live</code>.</td></tr>
+</tbody>
+</table>
+
+<p>The reason those three pillars are here together, and not any one alone:</p>
+<ul>
+<li><strong>Toolbox alone</strong> would give you tool discovery but no ceremony and nothing to <em>make</em>.</li>
+<li><strong>Routines alone</strong> would give you a script with no governed tool surface.</li>
+<li><strong>Copilot SDK alone</strong> would happily write files but wouldn't know which studio tools to reach for.</li>
+</ul>
+<p>Together they're the shape of a real agent app: <strong>governed tool discovery + a routine that shapes intent + an agent that emits real artifacts</strong>.</p>
+
+<h2>The numbers</h2>
+<ul>
+<li>Tools in the box: <strong>18</strong></li>
+<li>Tools in the model context: <strong>2</strong> (<code>tool_search</code> + <code>call_tool</code>)</li>
+<li><code>tool_search</code> round-trips: <strong>9</strong></li>
+<li>Routines: <strong>4</strong> (<code>kickoff</code>, <code>prototype</code>, <code>playtest_loop</code>, <code>ship_it</code>)</li>
+<li>Guarded tools that require approval: <strong>1</strong> (<code>leaderboard_cabinet.post</code>)</li>
+<li>Playable HTML files produced by the run: <strong>1</strong> — a real one, ~200 lines, 6 KB</li>
+<li>Lines of agent code that changed when I added a 19th studio tool: <strong>0</strong></li>
+</ul>
+
+<h2>Run it locally</h2>
+<p>Prereqs: <strong>Python 3.10+</strong>. Nothing else. No Azure, no model key, no dependencies to install.</p>
+
+<pre><code class="language-bash">git clone https://github.com/LadyNaggaga/creativetoolbox
+cd creativetoolbox/demos/pixel-jam-studio
+
+make demo        # runs the jam, writes game-output/index.html
+make play        # opens the game in your default browser
+</code></pre>
+
+<p>That's it. <code>make demo</code> starts the local Toolbox emulator, walks through the nine turns, and drops a real playable <code>index.html</code> in <code>game-output/</code>. <code>make play</code> opens it.</p>
+
+<p><strong>Controls:</strong> ← → or A/D to move · P to pause · R to restart · click <strong>▶ START</strong> to begin (the intro types itself out first).</p>
+
+<p>Want to remix it?</p>
+<ul>
+<li>Change the theme wheel in <code>mock-backends/hero_tools/theme_wheel_spin.py</code></li>
+<li>Add a new studio tool in <code>mock-backends/tools.json</code> — the agent code doesn't change</li>
+<li>Tweak the game template in <code>mock-backends/hero_tools/code_scribe_write_game.py</code> — that's the template a real Copilot-SDK agent would replace with model-generated code</li>
+</ul>
+
+<h2>Go real</h2>
+<pre><code class="language-bash">pip install -e "python/.[live]"        # installs github-copilot-sdk
+python python/main.py --live
+</code></pre>
+<p>In <code>--live</code> mode the Copilot SDK drives the whole loop from your app: it calls <code>tool_search</code>/<code>call_tool</code> itself and, at the code-emission step, writes the game source directly rather than stamping a template.</p>
+
+<h2>Honest caveats</h2>
+<p>Tool Search is in preview. The scripted mode uses a local emulator that ranks by keyword overlap — it's a faithful stand-in for the shape of the real endpoint, but the production ranker is smarter. The game is deliberately tiny (one screen, three sprite kinds, two SFX) — the point is that an agent can emit a playable, opinionated artifact from a spec, not that this specific game is a masterpiece.</p>
+
+<p class="nav" style="margin-top:2rem;">&gt;_ happy jamming.</p>
+</body></html>

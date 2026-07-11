@@ -29,6 +29,16 @@
       "lean": "squad-as-team + governance",
       "boxSize": 48,
       "tokens": { "turns": 6, "pinned": 0 }
+    },
+    {
+      "slug": "pixel-jam-studio",
+      "title": "Pixel Jam Studio",
+      "blurb": "An AI studio-mate runs a 48-hour game jam \u2014 kickoff \u2192 prototype \u2192 playtest \u2192 ship, and the Copilot SDK writes a real playable game.",
+      "repo": "https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/pixel-jam-studio",
+      "blog": "blog/pixel-jam-studio.html",
+      "lean": "toolbox + routines + copilot sdk",
+      "boxSize": 18,
+      "tokens": { "turns": 9, "pinned": 0 }
     }
   ],
   "cloud": [
