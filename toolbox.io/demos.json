@@ -65,6 +65,16 @@
   ],
   "trends": [
     {
+      "slug": "build-your-own-toolbox",
+      "title": "Build Your Own Toolbox with Tool Search",
+      "blurb": "A beginner-friendly guide to creating focused tools, discovering them by intent, and adding safe actions gradually.",
+      "repo": "https://github.com/LadyNaggaga/creativetoolbox",
+      "blog": "blog/build-your-own-toolbox.html",
+      "lean": "beginner guide + tool search",
+      "boxSize": 3,
+      "tokens": { "turns": 3, "pinned": 0 }
+    },
+    {
       "slug": "dri-oncall-agent",
       "title": "DRI On-Call Agent \u2014 the agent loop",
       "blurb": "Walk the four loops (reason \u2192 verify \u2192 wait \u2192 learn) through a real Friday incident. All four anchored to Foundry primitives.",

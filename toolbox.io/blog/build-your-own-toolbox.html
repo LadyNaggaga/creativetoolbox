@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Build Your Own Toolbox with Tool Search — toolbox.io</title>
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="../assets/favicon-180.png">
+  <link rel="stylesheet" href="../assets/commandline.css">
+  <style>
+    body.cl { max-width: 820px; margin: 0 auto; padding: 2rem 1.25rem; font-size: 15px; }
+    .cl h1 { border-bottom: 2px solid var(--cl-line); padding-bottom: .3rem; }
+    .cl pre { border: 1px solid var(--cl-line); padding: 12px 14px; overflow: auto; background: #cfcfcd; }
+    .cl code { font-family: var(--cl-mono); }
+    .cl ul, .cl ol { padding-left: 1.2rem; }
+    .cl li { margin: .35rem 0; }
+    .nav { margin-bottom: 1rem; }
+    .nav a { color: var(--cl-ink); text-decoration: underline; }
+    .badge { display: inline-block; font-size: .72em; letter-spacing: .04em; border: 1px solid var(--cl-line); padding: 0 .4ch; text-transform: uppercase; margin-bottom: .6rem; }
+    .callout { border-left: 3px solid var(--cl-line); margin: 1rem 0; padding: .2rem .8rem; color: var(--cl-faint); }
+  </style>
+</head>
+<body class="cl">
+  <p class="nav"><a href="../index.html#trends">&larr; back to gallery</a></p>
+  <span class="badge">beginner guide</span>
+  <h1>Build Your Own Toolbox with Tool Search</h1>
+  <p><em>A beginner-friendly path from a few useful functions to an agent that discovers the right one when it needs it.</em></p>
+
+  <h2>Start with the problem, not the tools</h2>
+  <p>A toolbox is a collection of capabilities an agent can use: checking inventory, looking up a customer, creating an issue, or reading a runbook. The first step is to choose one small workflow and list the decisions the agent must make.</p>
+  <p>For example, a café assistant might need to answer: “Do we have oat milk?” That workflow needs one read-only capability: <code>check_stock(item)</code>. Keep the first version narrow and safe.</p>
+
+  <h2>Make each tool do one clear job</h2>
+  <p>Give every tool a specific name, a short description, and a small set of inputs. A good description tells the agent when to use the tool and what it returns.</p>
+  <pre><code>check_stock(item)
+Returns the current quantity and availability of a menu ingredient.</code></pre>
+  <p>Prefer tools that report facts before tools that change things. When you add an action such as <code>place_order</code>, require the agent to show its proposed action and wait for approval where a mistake would matter.</p>
+
+  <h2>Why Tool Search helps</h2>
+  <p>Without Tool Search, every tool definition is supplied to the model on every turn. That works for a handful of tools, but the context grows as the toolbox grows.</p>
+  <p>With Tool Search, the model begins with two capabilities:</p>
+  <ol>
+    <li><code>tool_search</code> — describe the capability it needs.</li>
+    <li><code>call_tool</code> — invoke the matching tool with the right inputs.</li>
+  </ol>
+  <p>When the user asks about oat milk, the agent searches for “check ingredient availability,” receives the matching tool, and then calls it. The agent does not need the schemas for unrelated tools such as payroll or delivery tracking in its context.</p>
+  <p class="callout">Big box, tiny context: add useful tools without making every agent turn carry the entire box.</p>
+
+  <h2>Build in small, testable layers</h2>
+  <ol>
+    <li><strong>Create three read-only tools.</strong> Pick a single scenario and use predictable sample data.</li>
+    <li><strong>Write descriptions for discovery.</strong> Phrase them in the words a person—or an agent—would use to ask for the capability.</li>
+    <li><strong>Connect Tool Search.</strong> Let the agent find tools by intent instead of pinning every schema.</li>
+    <li><strong>Test normal and awkward requests.</strong> Try vague wording, missing details, and requests that should not trigger an action.</li>
+    <li><strong>Add guardrails before actions.</strong> Validate inputs, scope permissions, log calls, and use approval gates for consequential operations.</li>
+  </ol>
+
+  <h2>Give the agent a simple operating rule</h2>
+  <p>Your agent instructions should set a repeatable loop: understand the request, search for one relevant tool, call it, inspect the result, and then decide what to do next. Do not let the agent guess when a tool can provide the answer.</p>
+  <pre><code>For each request:
+1. Search for the capability you need.
+2. Call one relevant tool.
+3. Use the result to choose the next step.
+4. Ask for confirmation before consequential actions.</code></pre>
+
+  <h2>Learn from the included demos</h2>
+  <p>This repository’s local demos run without Azure or an API key, making them a useful place to see the pattern before connecting real systems. Clone the repository, choose a demo, and run <code>make demo</code>.</p>
+  <ul>
+    <li><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/mars-greenhouse-ops">Mars Greenhouse Ops</a> shows an agent finding the right operations console.</li>
+    <li><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/pizza-shop-ops">Pizza Shop Ops</a> demonstrates approval-gated actions.</li>
+    <li><a href="https://github.com/LadyNaggaga/creativetoolbox/tree/main/demos/squad-room">The Squad Room</a> shows multiple agent roles sharing one governed toolbox.</li>
+  </ul>
+
+  <h2>Your first success criteria</h2>
+  <p>A beginner toolbox is working when the agent can find the correct tool from a natural-language request, use its result accurately, and decline or escalate requests outside its permissions. Add tools one at a time, keep their purposes distinct, and treat every new action as a safety decision—not just a coding task.</p>
+  <p class="nav" style="margin-top: 2rem;">&gt;_ happy building.</p>
+</body>
+</html>
