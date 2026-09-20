@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flat context: why an agent should never see more than two tools — toolbox.io</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/favicon-180.png">
+<link rel="stylesheet" href="../assets/commandline.css">
+<style>
+ body.cl{max-width:820px;margin:0 auto;padding:2rem 1.25rem;font-size:15px;}
+ .cl h1{border-bottom:2px solid var(--cl-line);padding-bottom:.3rem;}
+ .cl pre{border:1px solid var(--cl-line);padding:12px 14px;overflow:auto;background:#cfcfcd;white-space:pre;}
+ .cl ul{padding-left:1.2rem;} .cl li{margin:.2rem 0;}
+ .nav{margin-bottom:1rem;} .nav a{color:var(--cl-ink);text-decoration:underline;}
+ .badge{display:inline-block;font-size:.72em;letter-spacing:.04em;border:1px solid var(--cl-line);padding:0 .4ch;text-transform:uppercase;margin-bottom:.6rem;}
+</style></head><body class="cl">
+<p class="nav"><a href="../index.html">&larr; back to gallery</a></p>
+<span class="badge">essay</span>
+<h1>Flat context: why an agent should never see more than two tools</h1>
+<p>Every demo in this gallery — <a href="pizza-shop-ops.html">Pizza Shop Ops</a>, <a href="mars-greenhouse-ops.html">Mars Greenhouse Ops</a>, <a href="squad-room.html">The Squad Room</a>, <a href="dri-oncall-agent.html">DRI On-Call Agent</a> — makes the same trade, over and over: instead of loading every tool's schema into the model's context on every turn, load two: <code>tool_search</code> and <code>call_tool</code>. The box can hold 18 tools or 480; the agent's context stays flat. This post is the argument for why that's the right default, not just a trick for demos.</p>
+
+<h2>The problem with "just give it all the tools"</h2>
+<p>The obvious way to wire an agent to N tools is to hand the model N JSON schemas up front and let it pick. It works — until N grows. Every schema costs tokens on every single turn, whether or not the model uses it. A 48-tool box re-sent on every turn of a 6-turn conversation isn't 48 tools' worth of cost; it's 288 tool-loads. Worse, tool selection accuracy tends to degrade as the list grows: the model has to read past dozens of irrelevant schemas to find the one it needs, and near-duplicate tools (two things that both sound like "search") get confused for each other.</p>
+
+<h2>The fix: search, don't stuff</h2>
+<p>A governed Toolbox flips the model from "reads every schema" to "asks a question." <code>tool_search</code> takes a natural-language intent — "find the theming pattern," "gate the oven behind approval," "cut a release" — and returns the two or three tools that actually match, ranked. <code>call_tool</code> invokes whichever one it picked. The full catalog can keep growing on the server side; the model's context never grows with it.</p>
+<pre><code>&gt;_ [agent]      &quot;gate the oven behind an approval before it starts a bake&quot;
+   [tool_search] query: &quot;require approval before starting an oven run&quot;
+   [matched]     oven.start, oven.status
+   [call_tool]   oven.start({ ... })  =&gt; [approval required] paused for a human
+</code></pre>
+<p>The context an agent carries per turn is <code>tool_search</code> + <code>call_tool</code> — two schemas — no matter whether the box behind it holds 18 tools (Pizza Shop Ops) or 48 (The Squad Room). Add a hundred more tools to the catalog next month and nothing in the agent's prompt changes.</p>
+
+<h2>Governance rides along for free</h2>
+<p>Because every call funnels through <code>call_tool</code>, policy lives on the box, not in the agent. Mark a tool <code>require_approval: always</code> and it pauses for a human no matter which agent, or how many agents, are calling it — that's the whole trick behind Squad Room's shared-Toolbox team and the DRI agent's governed actions. You don't audit N agents' worth of ad-hoc tool wiring; you audit one box.</p>
+
+<h2>What it costs you</h2>
+<p>Honesty first: Tool Search adds a round-trip. Instead of the model deciding in one shot, it searches, gets a short ranked list, then decides. For a handful of tools that overhead isn't worth it — flat context wins as the catalog grows, not before it. And ranking quality is only as good as your tool descriptions; vague or overlapping descriptions still confuse the ranker, just fewer schemas' worth of confusion instead of dozens.</p>
+
+<h2>Try it</h2>
+<p>Every local demo in this gallery runs with <code>make demo</code> and no cloud account. Start with <a href="pizza-shop-ops.html">Pizza Shop Ops</a> for the simplest version of the pattern, or <a href="squad-room.html">The Squad Room</a> to see the same box shared across a whole team.</p>
+<p class="nav" style="margin-top:2rem;">&gt;_ happy building.</p>
+</body></html>

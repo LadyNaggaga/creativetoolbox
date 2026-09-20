@@ -75,6 +75,12 @@
       "tokens": { "turns": 5, "pinned": 0 }
     },
     {
+      "title": "Flat context: why an agent should never see more than two tools",
+      "blurb": "The argument behind every demo here: search the box instead of stuffing every tool schema into context, and governance rides along for free.",
+      "blog": "blog/flat-context.html",
+      "lean": "tool_search + call_tool"
+    },
+    {
       "title": "Governed Autonomy",
       "blurb": "Approval-gated action tools, Entra Agent ID, and audit trails \u2014 what \"the agent is on-call\" actually needs.",
       "lean": "policy + identity",
