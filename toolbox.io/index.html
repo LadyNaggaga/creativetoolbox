@@ -216,6 +216,10 @@
     // Token-cost basis (per-turn): see footnote on index for derivation.
     const TOK_PER_SCHEMA = 110;   // typical OpenAI-style tool schema
     const SEARCH_OVERHEAD = 200;  // tokens returned per tool_search round-trip
+    const STATUS_META = {
+      'coming-soon': { className: ' soon', badge: 'coming soon', suppressLinks: true },
+      draft: { className: ' draft', badge: 'draft' }
+    };
 
     function computeTokens(d) {
       if (!d.tokens || !d.boxSize) return null;
@@ -230,10 +234,10 @@
 
     function card(d) {
       const el = document.createElement('div');
-      const soon = d.status === 'coming-soon';
-      const draft = d.status === 'draft';
-      el.className = 'cl-card' + (soon ? ' soon' : draft ? ' draft' : '');
-      const tok = soon ? null : computeTokens(d);
+      const status = STATUS_META[d.status] || {};
+      el.className = 'cl-card' + (status.className || '');
+      const tok = status.suppressLinks ? null : computeTokens(d);
+      const badge = status.badge ? `<span class="badge">${escapeHtml(status.badge)}</span>` : '';
       const tokBlock = tok ? `
             <div class="tok" aria-label="token comparison">
               <span class="lbl">without</span>
@@ -244,13 +248,13 @@
               <span class="num">${fmtNum(tok.with)} tok</span>
               <span class="save">\u2212${tok.savings}% over ${tok.turns} turns</span>
             </div>` : '';
-      const links = soon ? '' : `
+      const links = status.suppressLinks ? '' : `
             <span>
               ${d.repo ? `<a href="${escapeAttr(d.repo)}">repo</a> \u00b7 ` : ''}
               ${d.blog ? `<a href="${escapeAttr(d.blog)}">notes</a>` : ''}
             </span>`;
       el.innerHTML = `
-            ${soon ? '<span class="badge">coming soon</span>' : draft ? '<span class="badge">draft</span>' : ''}
+            ${badge}
             <strong class="cl-cursor">${escapeHtml(d.title)}</strong>
             <span>${escapeHtml(d.blurb || '')}</span>
             <span class="lean">[${escapeHtml(d.lean || 'tool-search')}]</span>${tokBlock}${links}`;
