@@ -141,6 +141,11 @@
     const TRACKS = ['local', 'cloud', 'share', 'trends'];
     let DATA = { local: [], cloud: [], share: [], trends: [] };
 
+    function trackFromHash() {
+      const track = location.hash.replace('#', '');
+      return TRACKS.includes(track) ? track : 'local';
+    }
+
     // Counter roll-up animation
     function animateCounter(target, endValue) {
       if (prefersReducedMotion) {
@@ -205,8 +210,7 @@
           animateCounter(document.getElementById('boxN'), maxBox);
         }
 
-        const initial = location.hash.replace('#', '');
-        render(TRACKS.includes(initial) ? initial : 'local', true);
+        render(trackFromHash(), true);
       })
       .catch(() => {
         document.getElementById('grid').innerHTML =
@@ -306,8 +310,7 @@
       if (btn) render(btn.dataset.track);
     });
     window.addEventListener('hashchange', () => {
-      const t = location.hash.replace('#', '');
-      render(TRACKS.includes(t) ? t : 'local');
+      render(trackFromHash());
     });
 
     function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
