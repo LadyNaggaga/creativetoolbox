@@ -238,7 +238,7 @@
 
     function card(d) {
       const el = document.createElement('div');
-      const status = Object.hasOwn(STATUS_META, d.status) ? STATUS_META[d.status] : {};
+      const status = Object.prototype.hasOwnProperty.call(STATUS_META, d.status) ? STATUS_META[d.status] : {};
       el.className = 'cl-card' + (status.className || '');
       const tok = status.hideDetails ? null : computeTokens(d);
       const badge = status.badge ? `<span class="badge">${escapeHtml(status.badge)}</span>` : '';
