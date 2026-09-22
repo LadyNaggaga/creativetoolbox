@@ -73,7 +73,7 @@
       <button data-track="local" role="tab" class="active">local</button>
       <button data-track="cloud" role="tab">cloud</button>
       <button data-track="share" role="tab">share <span class="soon">(soon)</span></button>
-      <button data-track="trends" role="tab">agentic trends</button>
+      <button id="trends" data-track="trends" role="tab">agentic trends</button>
     </nav>
     <p class="cl-caption" id="trackNote"></p>
     <div class="cl-grid" id="grid"><!-- cards injected from demos.json --></div>
@@ -217,7 +217,7 @@
     const TOK_PER_SCHEMA = 110;   // typical OpenAI-style tool schema
     const SEARCH_OVERHEAD = 200;  // tokens returned per tool_search round-trip
     const STATUS_META = {
-      'coming-soon': { className: ' soon', badge: 'coming soon', suppressLinks: true },
+      'coming-soon': { className: ' soon', badge: 'coming soon', hideDetails: true },
       draft: { className: ' draft', badge: 'draft' }
     };
 
@@ -236,7 +236,7 @@
       const el = document.createElement('div');
       const status = STATUS_META[d.status] || {};
       el.className = 'cl-card' + (status.className || '');
-      const tok = status.suppressLinks ? null : computeTokens(d);
+      const tok = status.hideDetails ? null : computeTokens(d);
       const badge = status.badge ? `<span class="badge">${escapeHtml(status.badge)}</span>` : '';
       const tokBlock = tok ? `
             <div class="tok" aria-label="token comparison">
@@ -248,7 +248,7 @@
               <span class="num">${fmtNum(tok.with)} tok</span>
               <span class="save">\u2212${tok.savings}% over ${tok.turns} turns</span>
             </div>` : '';
-      const links = status.suppressLinks ? '' : `
+      const links = status.hideDetails ? '' : `
             <span>
               ${d.repo ? `<a href="${escapeAttr(d.repo)}">repo</a> \u00b7 ` : ''}
               ${d.blog ? `<a href="${escapeAttr(d.blog)}">notes</a>` : ''}
