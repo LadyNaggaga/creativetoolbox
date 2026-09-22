@@ -21,6 +21,7 @@
     .cl-tabs button .soon { color: var(--cl-faint); font-size: 0.8em; }
     .cl-tabs button.active .soon { color: var(--cl-bg); opacity: 0.75; }
     .cl-card.soon { opacity: 0.72; }
+    .cl-card.draft { opacity: 0.9; }
     .cl-card .badge {
       align-self: flex-start; font-size: 0.72em; letter-spacing: 0.04em;
       border: 1px solid var(--cl-line); padding: 0 0.4ch; text-transform: uppercase;
@@ -230,7 +231,8 @@
     function card(d) {
       const el = document.createElement('div');
       const soon = d.status === 'coming-soon';
-      el.className = 'cl-card' + (soon ? ' soon' : '');
+      const draft = d.status === 'draft';
+      el.className = 'cl-card' + (soon ? ' soon' : draft ? ' draft' : '');
       const tok = soon ? null : computeTokens(d);
       const tokBlock = tok ? `
             <div class="tok" aria-label="token comparison">
@@ -248,7 +250,7 @@
               ${d.blog ? `<a href="${escapeAttr(d.blog)}">notes</a>` : ''}
             </span>`;
       el.innerHTML = `
-            ${soon ? '<span class="badge">coming soon</span>' : ''}
+            ${soon ? '<span class="badge">coming soon</span>' : draft ? '<span class="badge">draft</span>' : ''}
             <strong class="cl-cursor">${escapeHtml(d.title)}</strong>
             <span>${escapeHtml(d.blurb || '')}</span>
             <span class="lean">[${escapeHtml(d.lean || 'tool-search')}]</span>${tokBlock}${links}`;
