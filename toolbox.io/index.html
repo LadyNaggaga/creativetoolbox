@@ -142,7 +142,7 @@
     let DATA = { local: [], cloud: [], share: [], trends: [] };
 
     function trackFromHash() {
-      const track = location.hash.replace('#', '');
+      const track = location.hash.slice(1);
       return TRACKS.includes(track) ? track : 'local';
     }
 
